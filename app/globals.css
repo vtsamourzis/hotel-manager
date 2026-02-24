@@ -1,11 +1,168 @@
-/* Design system tokens added in Plan 01-02 */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ═══════════════════════════
+   DESIGN TOKENS
+═══════════════════════════ */
+:root {
+  --canvas:    hsl(33, 18%, 91%);
+  --surface-1: hsl(35, 22%, 97%);
+  --surface-2: hsl(0,  0%, 100%);
+
+  --ink-1: hsl(222, 28%, 11%);
+  --ink-2: hsl(30, 12%, 30%);
+  --ink-3: hsl(30,  7%, 50%);
+  --ink-4: hsl(220,  8%, 70%);
+
+  --border-1: rgba(100, 88, 68, 0.09);
+  --border-2: rgba(100, 88, 68, 0.15);
+  --border-3: rgba(100, 88, 68, 0.26);
+
+  --aegean:         hsl(198, 72%, 24%);
+  --aegean-hover:   hsl(198, 65%, 30%);
+  --aegean-surface: hsl(200, 55%, 93%);
+  --aegean-border:  hsl(198, 48%, 76%);
+  --aegean-text:    hsl(198, 72%, 18%);
+
+  --amber:         hsl(38, 82%, 44%);
+  --amber-surface: hsl(38, 80%, 93%);
+  --amber-border:  hsl(38, 65%, 72%);
+  --amber-text:    hsl(35, 75%, 28%);
+
+  --sage:         hsl(148, 40%, 38%);
+  --sage-surface: hsl(148, 40%, 93%);
+  --sage-border:  hsl(148, 32%, 70%);
+  --sage-text:    hsl(148, 45%, 24%);
+
+  --slate:         hsl(210, 18%, 50%);
+  --slate-surface: hsl(210, 20%, 93%);
+  --slate-border:  hsl(210, 18%, 72%);
+  --slate-text:    hsl(210, 22%, 32%);
+
+  --violet:         hsl(255, 48%, 50%);
+  --violet-surface: hsl(255, 50%, 94%);
+  --violet-border:  hsl(255, 40%, 74%);
+  --violet-text:    hsl(255, 55%, 30%);
+
+  --clay:         hsl(8, 60%, 43%);
+  --clay-surface: hsl(8, 62%, 93%);
+  --clay-border:  hsl(8, 52%, 66%);
+  --clay-text:    hsl(8, 65%, 26%);
+
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-pill: 100px;
+  --sidebar-w: 220px;
+  --mobile-nav-h: 62px;
+}
+
+/* ═══════════════════════════
+   BASE
+═══════════════════════════ */
 html, body { height: 100%; }
 
 body {
   font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  background: var(--canvas);
+  color: var(--ink-1);
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+
+/* ═══════════════════════════
+   SHARED CARD BASE
+═══════════════════════════ */
+.hcard {
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05), 0 0 0 0 transparent;
+}
+
+.hcard-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-1);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+
+.hcard-title { font-size: 13px; font-weight: 600; color: var(--ink-1); }
+.hcard-sub   { font-size: 11.5px; color: var(--ink-3); }
+
+.hcard-chip {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: var(--r-pill);
+  background: var(--border-1); color: var(--ink-4);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════
+   BUTTONS
+═══════════════════════════ */
+.btn-primary {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--aegean); color: white; border: none;
+  border-radius: var(--r-sm); padding: 8px 15px;
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: background 0.1s; white-space: nowrap; flex-shrink: 0;
+}
+.btn-primary:hover { background: var(--aegean-hover); }
+
+.btn-secondary {
+  display: flex; align-items: center; gap: 6px;
+  background: transparent; color: var(--ink-2);
+  border: 1px solid var(--border-2); border-radius: var(--r-sm);
+  padding: 7px 14px; font-size: 13px; font-weight: 500;
+  font-family: inherit; cursor: pointer; transition: background 0.1s, border-color 0.1s;
+  white-space: nowrap; flex-shrink: 0; position: relative;
+}
+.btn-secondary:hover { background: var(--border-1); border-color: var(--border-3); }
+
+.btn-badge {
+  min-width: 16px; height: 16px; background: var(--clay); color: white;
+  font-size: 9px; font-weight: 700; border-radius: var(--r-pill);
+  padding: 0 4px; display: flex; align-items: center; justify-content: center;
+}
+
+/* ═══════════════════════════
+   STATUS BADGES
+═══════════════════════════ */
+.s-badge {
+  display: inline-flex; align-items: center; padding: 3px 8px;
+  border-radius: var(--r-pill); font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.04em; border: 1px solid; white-space: nowrap;
+  text-transform: uppercase; flex-shrink: 0;
+}
+.s-badge.occupied { background: var(--amber-surface);  border-color: var(--amber-border);  color: var(--amber-text);  }
+.s-badge.vacant   { background: var(--sage-surface);   border-color: var(--sage-border);   color: var(--sage-text);   }
+.s-badge.cleaning { background: var(--slate-surface);  border-color: var(--slate-border);  color: var(--slate-text);  }
+.s-badge.arriving { background: var(--violet-surface); border-color: var(--violet-border); color: var(--violet-text); }
+.s-badge.alert    { background: var(--clay-surface);   border-color: var(--clay-border);   color: var(--clay-text);   }
+.s-badge.done     { background: var(--sage-surface);   border-color: var(--sage-border);   color: var(--sage-text);   }
+
+/* ═══════════════════════════
+   SHARED ICON BUTTON
+═══════════════════════════ */
+.icon-btn {
+  width: 30px; height: 30px; border-radius: var(--r-sm);
+  border: 1px solid var(--border-2); background: transparent;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--ink-3); position: relative; transition: background 0.1s, color 0.1s;
+}
+.icon-btn:hover { background: var(--border-1); color: var(--ink-2); }
+.alert-dot { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--clay); border: 1.5px solid var(--surface-1); }
+
+/* ═══════════════════════════
+   UTILITIES
+═══════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border-3); border-radius: 3px; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
