@@ -1,83 +1,174 @@
 "use client";
 
-/**
- * RoomDetailPanel stub — full implementation in plan 02-05.
- *
- * This stub satisfies the import in RoomGrid.tsx and prevents TypeScript errors.
- * It reads selectedRoomId from UIStore; when 02-05 is complete this component
- * is replaced with the full slide-in panel / bottom-sheet implementation.
- */
-import { useUIStore } from "@/lib/store/ui-store";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useRoomStore } from "@/lib/store/room-store";
+import { useUIStore } from "@/lib/store/ui-store";
+import { StatusButtons } from "./panels/StatusButtons";
+import { GuestInfo } from "./panels/GuestInfo";
+import { ACPanel } from "./panels/ACPanel";
+import { LightsPanel } from "./panels/LightsPanel";
+import { LockControl } from "./panels/LockControl";
+import { BoilerPanel } from "./panels/BoilerPanel";
+import { CheckInModal } from "./CheckInModal";
+import styles from "./rooms.module.css";
 
-export function RoomDetailPanel() {
-  const { selectedRoomId, isPanelOpen, closePanel } = useUIStore((s) => ({
-    selectedRoomId: s.selectedRoomId,
-    isPanelOpen: s.isPanelOpen,
-    closePanel: s.closePanel,
-  }));
+const STATUS_BADGE_CLASS: Record<string, string> = {
+  Occupied:  styles.statusBadgeOccupied,
+  Vacant:    styles.statusBadgeVacant,
+  Cleaning:  styles.statusBadgeCleaning,
+  Preparing: styles.statusBadgePreparing,
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  Occupied:  "Κατειλημμένο",
+  Vacant:    "Ελεύθερο",
+  Cleaning:  "Καθαρισμός",
+  Preparing: "Προετοιμασία",
+};
+
+// Stable QueryClient for the panel — hoisted outside component to avoid recreation
+const panelQueryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
+});
+
+function PanelContent() {
   const rooms = useRoomStore((s) => s.rooms);
+  const { selectedRoomId, isPanelOpen, closePanel, openCheckinModal } = useUIStore();
 
-  if (!isPanelOpen || !selectedRoomId) return null;
-
-  const room = rooms[selectedRoomId];
+  const room = selectedRoomId ? rooms[selectedRoomId] : null;
+  const status = room?.status ?? "Vacant";
+  const badgeClass = STATUS_BADGE_CLASS[status] ?? styles.statusBadgeVacant;
+  const badgeLabel = STATUS_LABEL[status] ?? status;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={`Δωμάτιο ${selectedRoomId}`}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.35)",
-        zIndex: 200,
-        display: "flex",
-        alignItems: "flex-end",
-        justifyContent: "flex-end",
-      }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) closePanel();
-      }}
-    >
+    <>
+      {/* Backdrop — closes panel when clicked on mobile */}
       <div
-        style={{
-          background: "var(--surface-1)",
-          borderLeft: "1px solid var(--border-2)",
-          width: "min(420px, 100%)",
-          height: "100%",
-          padding: "24px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "12px",
-        }}
+        className={`${styles.backdrop} ${isPanelOpen ? styles.backdropVisible : ""}`}
+        onClick={closePanel}
+        aria-hidden="true"
+      />
+
+      {/* Panel — always in DOM; CSS translateX controls visibility */}
+      <aside
+        className={`${styles.detailPanel} ${isPanelOpen ? styles.detailPanelOpen : ""}`}
+        aria-label={
+          selectedRoomId
+            ? `Λεπτομέρειες δωματίου ${selectedRoomId}`
+            : "Λεπτομέρειες δωματίου"
+        }
+        aria-hidden={!isPanelOpen}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h2 style={{ fontSize: "22px", fontWeight: 700, letterSpacing: "-0.8px" }}>
-            Δωμάτιο {selectedRoomId}
-          </h2>
+        {/* Panel header */}
+        <div className={styles.panelHeader}>
+          {selectedRoomId && (
+            <span className={styles.panelRoomNumber}>{selectedRoomId}</span>
+          )}
+          {selectedRoomId && (
+            <span className={`${styles.statusBadge} ${badgeClass}`}>{badgeLabel}</span>
+          )}
+          {selectedRoomId && status !== "Occupied" && (
+            <button
+              className={styles.checkinBtn}
+              onClick={openCheckinModal}
+            >
+              + Check-in
+            </button>
+          )}
           <button
+            className={styles.panelCloseBtn}
             onClick={closePanel}
-            style={{
-              background: "transparent",
-              border: "1px solid var(--border-2)",
-              borderRadius: "var(--r-sm)",
-              padding: "6px 12px",
-              cursor: "pointer",
-              fontSize: "12px",
-              color: "var(--ink-3)",
-            }}
+            aria-label="Κλείσιμο"
           >
-            Κλείσιμο
+            ×
           </button>
         </div>
-        <p style={{ color: "var(--ink-3)", fontSize: "13px" }}>
-          Κατάσταση: <strong>{room?.status ?? "—"}</strong>
-        </p>
-        <p style={{ color: "var(--ink-3)", fontSize: "12px" }}>
-          Πλήρες panel διαθέσιμο στο plan 02-05.
-        </p>
-      </div>
-    </div>
+
+        {/* Sub-panels — shown only when a room is selected */}
+        {selectedRoomId && room ? (
+          <div className={styles.panelContent}>
+            {/* 1. Status buttons */}
+            <div className={styles.panelSection}>
+              <div className={styles.panelSectionTitle}>Κατάσταση</div>
+              <StatusButtons roomId={selectedRoomId} currentStatus={status} />
+            </div>
+
+            {/* 2. Guest info (Occupied only) */}
+            {status === "Occupied" && (
+              <div className={styles.panelSection}>
+                <div className={styles.panelSectionTitle}>Επισκέπτης</div>
+                <GuestInfo roomId={selectedRoomId} currentStatus={status} />
+              </div>
+            )}
+
+            {/* 3. AC panel */}
+            <div className={styles.panelSection}>
+              <div className={styles.panelSectionTitle}>Κλιματισμός</div>
+              <ACPanel roomId={selectedRoomId} acState={room.acState} />
+            </div>
+
+            {/* 4. Lights panel */}
+            <div className={styles.panelSection}>
+              <div className={styles.panelSectionTitle}>Φωτισμός</div>
+              <LightsPanel roomId={selectedRoomId} lights={room.lights} />
+            </div>
+
+            {/* 5. Lock control */}
+            <div className={styles.panelSection}>
+              <div className={styles.panelSectionTitle}>Κλειδαριά</div>
+              <LockControl roomId={selectedRoomId} lockState={room.lock} />
+            </div>
+
+            {/* 6. Boiler panel */}
+            <div className={styles.panelSection}>
+              <div className={styles.panelSectionTitle}>Θερμοσίφωνας</div>
+              <BoilerPanel
+                boilerSource={room.boilerSource}
+                hotWaterTemp={room.hotWaterTemp}
+              />
+            </div>
+
+            {/* Humidity — read-only from input_number entity */}
+            {room.humidity && (
+              <div className={styles.panelSection}>
+                <div className={styles.panelSectionTitle}>Υγρασία</div>
+                <div className={styles.humidityRow}>
+                  <span className={styles.humidityValue}>
+                    {Number(room.humidity.state).toFixed(0)}%
+                  </span>
+                  <span className={styles.humidityLabel}>σχετική υγρασία</span>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--ink-4)",
+              fontSize: "13px",
+              padding: "24px",
+              textAlign: "center",
+            }}
+          >
+            Επιλέξτε ένα δωμάτιο
+          </div>
+        )}
+      </aside>
+
+      {/* Check-in modal */}
+      <CheckInModal />
+    </>
+  );
+}
+
+export function RoomDetailPanel() {
+  return (
+    <QueryClientProvider client={panelQueryClient}>
+      <PanelContent />
+    </QueryClientProvider>
   );
 }
