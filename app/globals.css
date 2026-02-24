@@ -166,3 +166,18 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border-3); border-radius: 3px; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════
+   RESPONSIVE NAV VISIBILITY
+═══════════════════════════ */
+.desktop-nav { display: contents; }
+.mobile-nav  { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-nav { display: none; }
+  .mobile-nav  { display: contents; }
+}
+
+@media (min-width: 769px) {
+  .page-scroll { padding-bottom: 48px !important; }
+}
