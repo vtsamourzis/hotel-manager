@@ -2373,3 +2373,822 @@ climate:
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
+
+# ==============================================================================
+# TEMPLATE LIGHTS — 4 per room × 10 = 40 entities
+# Each template light is backed by:
+#   - input_boolean.room_{id}_{zone}_on   (on/off state)
+#   - input_number.room_{id}_{zone}_brightness (0-100)
+# Entity IDs must match entity-map.ts: light.room_{id}_{zone}
+# ==============================================================================
+
+light:
+  - platform: template
+    lights:
+
+      # Room 101
+      room_101_ceiling:
+        friendly_name: "Room 101 Ceiling"
+        unique_id: "room_101_ceiling_light"
+        value_template: "{{ states('input_boolean.room_101_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_101_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_101_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_101_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_101_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_101_side_1:
+        friendly_name: "Room 101 Side 1"
+        unique_id: "room_101_side_1_light"
+        value_template: "{{ states('input_boolean.room_101_side_1_on') }}"
+        level_template: "{{ states('input_number.room_101_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_101_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_101_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_101_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_101_side_2:
+        friendly_name: "Room 101 Side 2"
+        unique_id: "room_101_side_2_light"
+        value_template: "{{ states('input_boolean.room_101_side_2_on') }}"
+        level_template: "{{ states('input_number.room_101_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_101_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_101_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_101_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_101_ambient:
+        friendly_name: "Room 101 Ambient"
+        unique_id: "room_101_ambient_light"
+        value_template: "{{ states('input_boolean.room_101_ambient_on') }}"
+        level_template: "{{ states('input_number.room_101_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_101_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_101_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_101_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 102
+      room_102_ceiling:
+        friendly_name: "Room 102 Ceiling"
+        unique_id: "room_102_ceiling_light"
+        value_template: "{{ states('input_boolean.room_102_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_102_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_102_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_102_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_102_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_102_side_1:
+        friendly_name: "Room 102 Side 1"
+        unique_id: "room_102_side_1_light"
+        value_template: "{{ states('input_boolean.room_102_side_1_on') }}"
+        level_template: "{{ states('input_number.room_102_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_102_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_102_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_102_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_102_side_2:
+        friendly_name: "Room 102 Side 2"
+        unique_id: "room_102_side_2_light"
+        value_template: "{{ states('input_boolean.room_102_side_2_on') }}"
+        level_template: "{{ states('input_number.room_102_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_102_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_102_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_102_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_102_ambient:
+        friendly_name: "Room 102 Ambient"
+        unique_id: "room_102_ambient_light"
+        value_template: "{{ states('input_boolean.room_102_ambient_on') }}"
+        level_template: "{{ states('input_number.room_102_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_102_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_102_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_102_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 103
+      room_103_ceiling:
+        friendly_name: "Room 103 Ceiling"
+        unique_id: "room_103_ceiling_light"
+        value_template: "{{ states('input_boolean.room_103_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_103_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_103_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_103_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_103_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_103_side_1:
+        friendly_name: "Room 103 Side 1"
+        unique_id: "room_103_side_1_light"
+        value_template: "{{ states('input_boolean.room_103_side_1_on') }}"
+        level_template: "{{ states('input_number.room_103_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_103_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_103_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_103_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_103_side_2:
+        friendly_name: "Room 103 Side 2"
+        unique_id: "room_103_side_2_light"
+        value_template: "{{ states('input_boolean.room_103_side_2_on') }}"
+        level_template: "{{ states('input_number.room_103_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_103_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_103_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_103_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_103_ambient:
+        friendly_name: "Room 103 Ambient"
+        unique_id: "room_103_ambient_light"
+        value_template: "{{ states('input_boolean.room_103_ambient_on') }}"
+        level_template: "{{ states('input_number.room_103_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_103_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_103_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_103_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 104
+      room_104_ceiling:
+        friendly_name: "Room 104 Ceiling"
+        unique_id: "room_104_ceiling_light"
+        value_template: "{{ states('input_boolean.room_104_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_104_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_104_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_104_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_104_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_104_side_1:
+        friendly_name: "Room 104 Side 1"
+        unique_id: "room_104_side_1_light"
+        value_template: "{{ states('input_boolean.room_104_side_1_on') }}"
+        level_template: "{{ states('input_number.room_104_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_104_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_104_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_104_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_104_side_2:
+        friendly_name: "Room 104 Side 2"
+        unique_id: "room_104_side_2_light"
+        value_template: "{{ states('input_boolean.room_104_side_2_on') }}"
+        level_template: "{{ states('input_number.room_104_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_104_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_104_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_104_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_104_ambient:
+        friendly_name: "Room 104 Ambient"
+        unique_id: "room_104_ambient_light"
+        value_template: "{{ states('input_boolean.room_104_ambient_on') }}"
+        level_template: "{{ states('input_number.room_104_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_104_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_104_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_104_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 105
+      room_105_ceiling:
+        friendly_name: "Room 105 Ceiling"
+        unique_id: "room_105_ceiling_light"
+        value_template: "{{ states('input_boolean.room_105_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_105_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_105_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_105_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_105_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_105_side_1:
+        friendly_name: "Room 105 Side 1"
+        unique_id: "room_105_side_1_light"
+        value_template: "{{ states('input_boolean.room_105_side_1_on') }}"
+        level_template: "{{ states('input_number.room_105_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_105_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_105_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_105_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_105_side_2:
+        friendly_name: "Room 105 Side 2"
+        unique_id: "room_105_side_2_light"
+        value_template: "{{ states('input_boolean.room_105_side_2_on') }}"
+        level_template: "{{ states('input_number.room_105_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_105_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_105_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_105_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_105_ambient:
+        friendly_name: "Room 105 Ambient"
+        unique_id: "room_105_ambient_light"
+        value_template: "{{ states('input_boolean.room_105_ambient_on') }}"
+        level_template: "{{ states('input_number.room_105_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_105_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_105_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_105_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 201
+      room_201_ceiling:
+        friendly_name: "Room 201 Ceiling"
+        unique_id: "room_201_ceiling_light"
+        value_template: "{{ states('input_boolean.room_201_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_201_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_201_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_201_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_201_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_201_side_1:
+        friendly_name: "Room 201 Side 1"
+        unique_id: "room_201_side_1_light"
+        value_template: "{{ states('input_boolean.room_201_side_1_on') }}"
+        level_template: "{{ states('input_number.room_201_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_201_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_201_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_201_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_201_side_2:
+        friendly_name: "Room 201 Side 2"
+        unique_id: "room_201_side_2_light"
+        value_template: "{{ states('input_boolean.room_201_side_2_on') }}"
+        level_template: "{{ states('input_number.room_201_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_201_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_201_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_201_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_201_ambient:
+        friendly_name: "Room 201 Ambient"
+        unique_id: "room_201_ambient_light"
+        value_template: "{{ states('input_boolean.room_201_ambient_on') }}"
+        level_template: "{{ states('input_number.room_201_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_201_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_201_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_201_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 202
+      room_202_ceiling:
+        friendly_name: "Room 202 Ceiling"
+        unique_id: "room_202_ceiling_light"
+        value_template: "{{ states('input_boolean.room_202_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_202_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_202_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_202_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_202_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_202_side_1:
+        friendly_name: "Room 202 Side 1"
+        unique_id: "room_202_side_1_light"
+        value_template: "{{ states('input_boolean.room_202_side_1_on') }}"
+        level_template: "{{ states('input_number.room_202_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_202_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_202_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_202_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_202_side_2:
+        friendly_name: "Room 202 Side 2"
+        unique_id: "room_202_side_2_light"
+        value_template: "{{ states('input_boolean.room_202_side_2_on') }}"
+        level_template: "{{ states('input_number.room_202_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_202_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_202_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_202_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_202_ambient:
+        friendly_name: "Room 202 Ambient"
+        unique_id: "room_202_ambient_light"
+        value_template: "{{ states('input_boolean.room_202_ambient_on') }}"
+        level_template: "{{ states('input_number.room_202_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_202_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_202_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_202_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 203
+      room_203_ceiling:
+        friendly_name: "Room 203 Ceiling"
+        unique_id: "room_203_ceiling_light"
+        value_template: "{{ states('input_boolean.room_203_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_203_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_203_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_203_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_203_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_203_side_1:
+        friendly_name: "Room 203 Side 1"
+        unique_id: "room_203_side_1_light"
+        value_template: "{{ states('input_boolean.room_203_side_1_on') }}"
+        level_template: "{{ states('input_number.room_203_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_203_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_203_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_203_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_203_side_2:
+        friendly_name: "Room 203 Side 2"
+        unique_id: "room_203_side_2_light"
+        value_template: "{{ states('input_boolean.room_203_side_2_on') }}"
+        level_template: "{{ states('input_number.room_203_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_203_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_203_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_203_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_203_ambient:
+        friendly_name: "Room 203 Ambient"
+        unique_id: "room_203_ambient_light"
+        value_template: "{{ states('input_boolean.room_203_ambient_on') }}"
+        level_template: "{{ states('input_number.room_203_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_203_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_203_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_203_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 301
+      room_301_ceiling:
+        friendly_name: "Room 301 Ceiling"
+        unique_id: "room_301_ceiling_light"
+        value_template: "{{ states('input_boolean.room_301_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_301_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_301_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_301_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_301_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_301_side_1:
+        friendly_name: "Room 301 Side 1"
+        unique_id: "room_301_side_1_light"
+        value_template: "{{ states('input_boolean.room_301_side_1_on') }}"
+        level_template: "{{ states('input_number.room_301_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_301_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_301_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_301_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_301_side_2:
+        friendly_name: "Room 301 Side 2"
+        unique_id: "room_301_side_2_light"
+        value_template: "{{ states('input_boolean.room_301_side_2_on') }}"
+        level_template: "{{ states('input_number.room_301_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_301_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_301_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_301_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_301_ambient:
+        friendly_name: "Room 301 Ambient"
+        unique_id: "room_301_ambient_light"
+        value_template: "{{ states('input_boolean.room_301_ambient_on') }}"
+        level_template: "{{ states('input_number.room_301_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_301_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_301_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_301_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      # Room 302
+      room_302_ceiling:
+        friendly_name: "Room 302 Ceiling"
+        unique_id: "room_302_ceiling_light"
+        value_template: "{{ states('input_boolean.room_302_ceiling_on') }}"
+        level_template: "{{ states('input_number.room_302_ceiling_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_302_ceiling_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_302_ceiling_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_302_ceiling_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_302_side_1:
+        friendly_name: "Room 302 Side 1"
+        unique_id: "room_302_side_1_light"
+        value_template: "{{ states('input_boolean.room_302_side_1_on') }}"
+        level_template: "{{ states('input_number.room_302_side_1_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_302_side_1_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_302_side_1_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_302_side_1_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_302_side_2:
+        friendly_name: "Room 302 Side 2"
+        unique_id: "room_302_side_2_light"
+        value_template: "{{ states('input_boolean.room_302_side_2_on') }}"
+        level_template: "{{ states('input_number.room_302_side_2_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_302_side_2_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_302_side_2_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_302_side_2_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+      room_302_ambient:
+        friendly_name: "Room 302 Ambient"
+        unique_id: "room_302_ambient_light"
+        value_template: "{{ states('input_boolean.room_302_ambient_on') }}"
+        level_template: "{{ states('input_number.room_302_ambient_brightness') | int * 2.55 }}"
+        turn_on:
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.room_302_ambient_on
+        turn_off:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.room_302_ambient_on
+        set_level:
+          - service: input_number.set_value
+            entity_id: input_number.room_302_ambient_brightness
+            data:
+              value: "{{ (brightness / 2.55) | round(0) }}"
+
+# ==============================================================================
+# TEMPLATE LOCKS — 1 per room × 10 = 10 entities
+# Each template lock is backed by input_boolean.room_{id}_locked
+# Entity IDs must match entity-map.ts: lock.room_{id}_door
+# ==============================================================================
+
+lock:
+  - platform: template
+    name: "Room 101 Door"
+    unique_id: "room_101_door_lock"
+    value_template: "{{ states('input_boolean.room_101_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_101_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_101_locked
+
+  - platform: template
+    name: "Room 102 Door"
+    unique_id: "room_102_door_lock"
+    value_template: "{{ states('input_boolean.room_102_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_102_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_102_locked
+
+  - platform: template
+    name: "Room 103 Door"
+    unique_id: "room_103_door_lock"
+    value_template: "{{ states('input_boolean.room_103_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_103_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_103_locked
+
+  - platform: template
+    name: "Room 104 Door"
+    unique_id: "room_104_door_lock"
+    value_template: "{{ states('input_boolean.room_104_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_104_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_104_locked
+
+  - platform: template
+    name: "Room 105 Door"
+    unique_id: "room_105_door_lock"
+    value_template: "{{ states('input_boolean.room_105_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_105_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_105_locked
+
+  - platform: template
+    name: "Room 201 Door"
+    unique_id: "room_201_door_lock"
+    value_template: "{{ states('input_boolean.room_201_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_201_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_201_locked
+
+  - platform: template
+    name: "Room 202 Door"
+    unique_id: "room_202_door_lock"
+    value_template: "{{ states('input_boolean.room_202_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_202_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_202_locked
+
+  - platform: template
+    name: "Room 203 Door"
+    unique_id: "room_203_door_lock"
+    value_template: "{{ states('input_boolean.room_203_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_203_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_203_locked
+
+  - platform: template
+    name: "Room 301 Door"
+    unique_id: "room_301_door_lock"
+    value_template: "{{ states('input_boolean.room_301_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_301_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_301_locked
+
+  - platform: template
+    name: "Room 302 Door"
+    unique_id: "room_302_door_lock"
+    value_template: "{{ states('input_boolean.room_302_locked') }}"
+    lock:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.room_302_locked
+    unlock:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.room_302_locked
