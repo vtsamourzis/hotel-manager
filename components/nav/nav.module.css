@@ -1,0 +1,190 @@
+/* ═══════════════════════════
+   SIDEBAR (desktop)
+═══════════════════════════ */
+
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface-2);
+  border-right: 1px solid var(--border-2);
+  box-shadow: 2px 0 12px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.sidebarBrand {
+  padding: 16px 14px 14px;
+  border-bottom: 1px solid var(--border-1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandMark {
+  width: 30px;
+  height: 30px;
+  background: var(--aegean);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+}
+
+.brandName {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-1);
+  letter-spacing: -0.2px;
+  line-height: 1.1;
+}
+
+.brandSub {
+  font-size: 10.5px;
+  color: var(--ink-4);
+}
+
+.sidebarNav {
+  flex: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow-y: auto;
+}
+
+.navLabel {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  padding: 12px 8px 4px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.1s, color 0.1s;
+  text-decoration: none;
+  user-select: none;
+}
+
+.navItem:hover {
+  background: var(--border-1);
+  color: var(--ink-1);
+}
+
+.navItemActive {
+  background: var(--aegean-surface);
+  color: var(--aegean-text);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--aegean);
+}
+
+.sidebarUser {
+  padding: 11px 14px;
+  border-top: 1px solid var(--border-1);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.userAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--aegean-surface);
+  border: 1.5px solid var(--aegean-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--aegean);
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.userName {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRole {
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.2;
+}
+
+/* ═══════════════════════════
+   BOTTOM NAV (mobile)
+═══════════════════════════ */
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--mobile-nav-h);
+  background: var(--surface-1);
+  border-top: 1px solid var(--border-2);
+  display: flex;
+  align-items: stretch;
+  z-index: 100;
+  padding: 0 4px env(safe-area-inset-bottom, 0);
+}
+
+.bottomNavItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--ink-4);
+  font-size: 9.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.1s;
+  padding: 6px 4px;
+  border-radius: var(--r-sm);
+  user-select: none;
+  position: relative;
+}
+
+.bottomNavItem:hover {
+  color: var(--ink-2);
+}
+
+.bottomNavItemActive {
+  color: var(--aegean);
+  font-weight: 600;
+}
+
+.navBadge {
+  position: absolute;
+  top: 6px;
+  right: calc(50% - 14px);
+  width: 5px;
+  height: 5px;
+  background: var(--clay);
+  border-radius: 50%;
+}

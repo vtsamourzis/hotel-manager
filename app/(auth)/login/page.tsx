@@ -1,6 +1,7 @@
 "use client"
 import { useState, useTransition } from "react"
 import { loginAction } from "./actions"
+import styles from "@/components/auth/login.module.css"
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
@@ -17,29 +18,16 @@ export default function LoginPage() {
   return (
     <div style={{ width: "100%", maxWidth: "380px" }}>
       {/* Property name header */}
-      <div style={{ textAlign: "center", marginBottom: "28px" }}>
-        <h1 style={{
-          fontSize: "22px", fontWeight: 700, letterSpacing: "-0.5px",
-          color: "var(--ink-1, #1a1a1a)", lineHeight: 1.2,
-        }}>
-          {process.env.NEXT_PUBLIC_PROPERTY_NAME ?? "Hotel Manager"}
-        </h1>
-      </div>
+      <p className={styles.propertyName}>
+        {process.env.NEXT_PUBLIC_PROPERTY_NAME ?? "Hotel Manager"}
+      </p>
 
       {/* Login card */}
-      <div style={{
-        background: "var(--surface-2, #ffffff)",
-        border: "1px solid var(--border-2, #d4c9b8)",
-        borderRadius: "var(--r-lg, 10px)",
-        padding: "28px 24px",
-      }}>
+      <div className={styles.loginCard}>
         <form action={handleSubmit}>
           {/* Email field */}
           <div style={{ marginBottom: "14px" }}>
-            <label style={{
-              display: "block", fontSize: "12px", fontWeight: 600,
-              color: "var(--ink-2, #444444)", marginBottom: "6px",
-            }}>
+            <label className={styles.fieldLabel}>
               Email
             </label>
             <input
@@ -47,24 +35,13 @@ export default function LoginPage() {
               type="email"
               required
               autoComplete="email"
-              style={{
-                width: "100%", padding: "9px 11px",
-                border: "1px solid var(--border-2, #d4c9b8)",
-                borderRadius: "var(--r-sm, 6px)",
-                background: "var(--surface-1, #f5efe6)",
-                color: "var(--ink-1, #1a1a1a)",
-                fontSize: "14px", fontFamily: "inherit",
-                outline: "none",
-              }}
+              className={styles.fieldInput}
             />
           </div>
 
           {/* Password field */}
           <div style={{ marginBottom: error ? "10px" : "20px" }}>
-            <label style={{
-              display: "block", fontSize: "12px", fontWeight: 600,
-              color: "var(--ink-2, #444444)", marginBottom: "6px",
-            }}>
+            <label className={styles.fieldLabel}>
               Κωδικός
             </label>
             <input
@@ -72,27 +49,13 @@ export default function LoginPage() {
               type="password"
               required
               autoComplete="current-password"
-              style={{
-                width: "100%", padding: "9px 11px",
-                border: `1px solid ${error ? "var(--clay-border, #d97706)" : "var(--border-2, #d4c9b8)"}`,
-                borderRadius: "var(--r-sm, 6px)",
-                background: "var(--surface-1, #f5efe6)",
-                color: "var(--ink-1, #1a1a1a)",
-                fontSize: "14px", fontFamily: "inherit",
-                outline: "none",
-              }}
+              className={`${styles.fieldInput} ${error ? styles.fieldInputError : ""}`}
             />
           </div>
 
           {/* Inline error */}
           {error && (
-            <p style={{
-              fontSize: "12.5px", color: "var(--clay-text, #92400e)",
-              background: "var(--clay-surface, #fef3c7)",
-              border: "1px solid var(--clay-border, #d97706)",
-              borderRadius: "var(--r-sm, 6px)", padding: "7px 10px",
-              marginBottom: "16px",
-            }}>
+            <p className={styles.errorMessage}>
               {error}
             </p>
           )}
@@ -101,28 +64,11 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isPending}
-            style={{
-              width: "100%", padding: "10px",
-              background: isPending ? "var(--aegean-hover, hsl(198,60%,32%))" : "var(--aegean, hsl(198,72%,24%))",
-              color: "white", border: "none",
-              borderRadius: "var(--r-sm, 6px)", fontSize: "14px",
-              fontWeight: 600, fontFamily: "inherit",
-              cursor: isPending ? "not-allowed" : "pointer",
-              display: "flex", alignItems: "center",
-              justifyContent: "center", gap: "8px",
-              opacity: isPending ? 0.85 : 1,
-            }}
+            className={styles.submitBtn}
           >
             {isPending ? (
               <>
-                <span style={{
-                  width: "14px", height: "14px",
-                  border: "2px solid rgba(255,255,255,0.3)",
-                  borderTopColor: "white",
-                  borderRadius: "50%",
-                  animation: "spin 0.7s linear infinite",
-                  display: "inline-block",
-                }} />
+                <span className={styles.spinner} />
                 Σύνδεση...
               </>
             ) : "Είσοδος"}
@@ -131,17 +77,9 @@ export default function LoginPage() {
       </div>
 
       {/* Powered by footer */}
-      <p style={{
-        textAlign: "center", marginTop: "20px",
-        fontSize: "11px", color: "var(--ink-4, #999999)",
-      }}>
+      <p className={styles.poweredBy}>
         Powered by AegeanSea Platform
       </p>
-
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        input:focus { border-color: var(--aegean-border, hsl(198,72%,50%)) !important; box-shadow: 0 0 0 3px var(--aegean-surface, hsl(198,72%,90%)); }
-      `}</style>
     </div>
   )
 }

@@ -1,0 +1,142 @@
+/* ═══════════════════════════
+   LOGIN / SETUP CARD
+═══════════════════════════ */
+
+.loginCard {
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.propertyName {
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--ink-1);
+  line-height: 1.2;
+}
+
+.pageTitle {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--ink-1);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.pageSubtitle {
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-bottom: 28px;
+}
+
+/* ═══════════════════════════
+   FORM FIELDS
+═══════════════════════════ */
+
+.fieldLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+}
+
+.fieldInput {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
+  background: var(--surface-1);
+  color: var(--ink-1);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.fieldInput:focus {
+  border-color: var(--aegean-border);
+  box-shadow: 0 0 0 3px var(--aegean-surface);
+}
+
+.fieldInputError {
+  border-color: var(--clay-border);
+}
+
+/* ═══════════════════════════
+   ERROR STATE
+═══════════════════════════ */
+
+.errorMessage {
+  font-size: 12.5px;
+  color: var(--clay-text);
+  background: var(--clay-surface);
+  border: 1px solid var(--clay-border);
+  border-radius: var(--r-sm);
+  padding: 7px 10px;
+  margin-bottom: 16px;
+}
+
+/* ═══════════════════════════
+   SUBMIT BUTTON
+═══════════════════════════ */
+
+.submitBtn {
+  width: 100%;
+  padding: 10px;
+  background: var(--aegean);
+  color: white;
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.1s;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--aegean-hover);
+}
+
+.submitBtn:disabled {
+  opacity: 0.85;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════
+   SPINNER
+═══════════════════════════ */
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ═══════════════════════════
+   FOOTER
+═══════════════════════════ */
+
+.poweredBy {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 11px;
+  color: var(--ink-4);
+}
