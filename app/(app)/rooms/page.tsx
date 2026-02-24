@@ -1,15 +1,18 @@
+"use client";
+
+import dynamic from "next/dynamic";
+
+// Avoid SSR hydration issues with Zustand stores
+// Note: next/dynamic with ssr:false must be in a Client Component (Turbopack requirement)
+const RoomGrid = dynamic(
+  () => import("@/components/rooms/RoomGrid").then((m) => ({ default: m.RoomGrid })),
+  { ssr: false }
+);
+
 export default function RoomsPage() {
   return (
-    <div style={{ padding: "26px 24px" }}>
-      <h1 style={{
-        fontSize: "22px", fontWeight: 700,
-        letterSpacing: "-0.5px", color: "var(--ink-1)",
-      }}>
-        Δωμάτια
-      </h1>
-      <p style={{ color: "var(--ink-3)", marginTop: "8px", fontSize: "13px" }}>
-        Σύντομα διαθέσιμο — Phase 2
-      </p>
+    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <RoomGrid />
     </div>
-  )
+  );
 }

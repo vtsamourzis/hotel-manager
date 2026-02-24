@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { Sidebar } from "@/components/nav/Sidebar"
 import { BottomNav } from "@/components/nav/BottomNav"
 import { HAProvider } from "@/providers/HAProvider"
+import { QueryProvider } from "@/providers/QueryProvider"
 import { OfflineOverlay } from "@/components/OfflineOverlay"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -10,6 +11,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!session) redirect("/login")
 
   return (
+    <QueryProvider>
     <HAProvider>
       <div style={{
         width: "100%",
@@ -43,5 +45,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {/* Full-screen overlay when HA connection is lost */}
       <OfflineOverlay />
     </HAProvider>
+    </QueryProvider>
   )
 }
