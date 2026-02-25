@@ -3,8 +3,9 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard, BedDouble, BarChart2, Droplets,
-  Zap, Settings, LifeBuoy
+  Zap, Settings, LifeBuoy, WifiOff
 } from "lucide-react"
+import { useServerOnline } from "@/lib/hooks/useServerOnline"
 import styles from "./nav.module.css"
 
 const NAV_ITEMS = [
@@ -19,22 +20,31 @@ const NAV_ITEMS = [
 
 export function BottomNav({ alertCount = 0 }: { alertCount?: number }) {
   const pathname = usePathname()
+  const serverOnline = useServerOnline()
 
   return (
-    <nav className={styles.bottomNav}>
-      {NAV_ITEMS.map(({ href, Icon, label }) => {
-        const isActive = pathname === href || pathname.startsWith(href + "/")
-        return (
-          <Link
-            key={href}
-            href={href}
-            className={`${styles.bottomNavItem} ${isActive ? styles.bottomNavItemActive : ""}`}
-          >
-            <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-            <span>{label}</span>
-          </Link>
-        )
-      })}
-    </nav>
+    <>
+      {!serverOnline && (
+        <div className={styles.cacheIndicatorMobile}>
+          <WifiOff size={12} />
+          {"Από cache"}
+        </div>
+      )}
+      <nav className={styles.bottomNav}>
+        {NAV_ITEMS.map(({ href, Icon, label }) => {
+          const isActive = pathname === href || pathname.startsWith(href + "/")
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`${styles.bottomNavItem} ${isActive ? styles.bottomNavItemActive : ""}`}
+            >
+              <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+              <span>{label}</span>
+            </Link>
+          )
+        })}
+      </nav>
+    </>
   )
 }

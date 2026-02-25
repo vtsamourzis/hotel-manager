@@ -5,6 +5,7 @@ import {
   LayoutDashboard, BedDouble, BarChart2, Droplets,
   Zap, Settings, LifeBuoy
 } from "lucide-react"
+import { CacheIndicator } from "@/components/CacheIndicator"
 import styles from "./nav.module.css"
 
 interface SidebarProps {
@@ -69,6 +70,9 @@ export function Sidebar({ userName = "Manager", userEmail = "", alertCount = 0 }
           )
         })}
       </nav>
+
+      {/* Cache/offline indicator */}
+      <CacheIndicator />
 
       {/* User area */}
       <div className={styles.sidebarUser}>
