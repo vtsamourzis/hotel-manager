@@ -1,8 +1,14 @@
-export default function EnergyPage() {
-  return (
-    <div style={{ padding: "var(--space-4)" }}>
-      <h2>Ενέργεια</h2>
-      <p>Phase 3 — coming soon</p>
-    </div>
-  );
+"use client";
+
+import dynamic from "next/dynamic";
+
+// Recharts uses ResponsiveContainer which measures parent width on mount --
+// this causes hydration mismatch if rendered server-side. Same pattern as rooms/page.tsx.
+const EnergyPage = dynamic(
+  () => import("@/components/energy/EnergyPage").then((m) => ({ default: m.EnergyPage })),
+  { ssr: false }
+);
+
+export default function EnergyRoute() {
+  return <EnergyPage />;
 }

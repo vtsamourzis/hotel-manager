@@ -1,0 +1,335 @@
+/* ═══════════════════════════
+   ENERGY PAGE LAYOUT
+═══════════════════════════ */
+
+.energyPage {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--space-4, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* ─── Header ─── */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink-1);
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+/* ─── Time range switcher ─── */
+
+.rangeGroup {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.rangeBtn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  background: transparent;
+  color: var(--ink-3);
+  border: none;
+  border-right: 1px solid var(--border-2);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.rangeBtn:last-child {
+  border-right: none;
+}
+
+.rangeBtn:hover {
+  background: var(--border-1);
+  color: var(--ink-2);
+}
+
+.rangeBtnActive {
+  background: var(--aegean);
+  color: white;
+}
+
+.rangeBtnActive:hover {
+  background: var(--aegean-hover);
+  color: white;
+}
+
+/* ─── Stat chips ─── */
+
+.statRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.statChip {
+  position: relative;
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  overflow: hidden;
+}
+
+.statAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--aegean);
+}
+
+.statAccentSage {
+  background: var(--sage);
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink-1);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.statLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+/* ─── Chart card ─── */
+
+.chartCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  overflow: hidden;
+}
+
+.chartSkeleton {
+  height: 200px;
+  border-radius: var(--r-sm);
+  background: var(--border-1);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ─── Section title ─── */
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-1);
+  margin-bottom: 12px;
+}
+
+/* ─── Category breakdown ─── */
+
+.breakdownCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  padding: 16px;
+}
+
+.breakdownGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.donutWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.barsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.barRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-1);
+}
+
+.barRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.barDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.barLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+  min-width: 100px;
+}
+
+.barTrack {
+  flex: 1;
+  height: 6px;
+  background: var(--border-1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.barValue {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-1);
+  min-width: 44px;
+  text-align: right;
+}
+
+/* ─── Room power bars ─── */
+
+.roomPowerCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  padding: 16px;
+}
+
+.roomBarList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.roomBarRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.roomDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.roomNumber {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink-1);
+  min-width: 38px;
+  letter-spacing: -0.5px;
+}
+
+.roomBarTrack {
+  flex: 1;
+  height: 8px;
+  background: var(--border-1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.roomBarFill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--aegean);
+  transition: width 0.6s ease;
+  opacity: 0.75;
+}
+
+.roomBarValue {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  min-width: 48px;
+  text-align: right;
+}
+
+/* ═══════════════════════════
+   RESPONSIVE
+═══════════════════════════ */
+
+@media (max-width: 768px) {
+  .energyPage {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .statRow {
+    gap: 8px;
+  }
+
+  .statChip {
+    padding: 10px 12px;
+  }
+
+  .statValue {
+    font-size: 20px;
+  }
+
+  .statLabel {
+    font-size: 10px;
+  }
+
+  .breakdownGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .barLabel {
+    min-width: 80px;
+    font-size: 11px;
+  }
+
+  .roomNumber {
+    font-size: 14px;
+    min-width: 32px;
+  }
+}
