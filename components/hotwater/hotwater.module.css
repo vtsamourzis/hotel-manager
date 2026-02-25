@@ -1,0 +1,459 @@
+/* ===================================================
+   Hot Water view -- hotwater.module.css
+   All values via CSS custom properties from globals.css
+=================================================== */
+
+/* -- Page layout -------------------------------- */
+.hotwaterPage {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink-1);
+  letter-spacing: -0.5px;
+}
+
+.variantToggle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--aegean);
+  background: none;
+  border: 1px solid var(--aegean-border);
+  border-radius: var(--r-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+
+.variantToggle:hover {
+  background: var(--aegean-surface);
+}
+
+/* -- Master toggle ------------------------------ */
+.masterRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.masterToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--aegean);
+  color: white;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.masterToggle:hover {
+  background: var(--aegean-hover);
+}
+
+.masterToggleOff {
+  background: var(--clay);
+}
+
+.masterToggleOff:hover {
+  background: hsl(8, 60%, 36%);
+}
+
+/* -- Gauge grid --------------------------------- */
+.gaugeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 640px) {
+  .gaugeGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -- Gauge card --------------------------------- */
+.gaugeCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.gaugeCardAccent {
+  height: 3px;
+  background: var(--aegean);
+}
+
+.gaugeCardBody {
+  padding: 16px;
+}
+
+.gaugeCenter {
+  text-align: center;
+}
+
+.gaugeLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-1);
+  margin-top: 8px;
+}
+
+.collectorLabel {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+/* -- SVG gauge ---------------------------------- */
+.gaugeSvg {
+  display: block;
+  margin: 0 auto;
+  max-width: 200px;
+}
+
+.gaugeArcBg {
+  fill: none;
+  stroke: var(--border-1);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.gaugeArcFill {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease, stroke 0.4s ease;
+}
+
+.gaugeTempText {
+  font-size: 32px;
+  font-weight: 700;
+  fill: var(--ink-1);
+  text-anchor: middle;
+  letter-spacing: -1px;
+}
+
+.gaugeTempUnit {
+  font-size: 14px;
+  font-weight: 400;
+  fill: var(--ink-3);
+  text-anchor: middle;
+}
+
+/* -- Element toggle ----------------------------- */
+.elementRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-1);
+}
+
+.elementLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.elementStatus {
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.elementStatusOn {
+  color: var(--sage);
+}
+
+.elementStatusOff {
+  color: var(--ink-4);
+}
+
+.toggleSwitch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  border: none;
+  cursor: pointer;
+  background: var(--border-3);
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toggleSwitchOn {
+  background: var(--aegean);
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+  pointer-events: none;
+}
+
+.toggleSwitchOn .toggleKnob {
+  transform: translateX(18px);
+}
+
+/* -- Threshold sliders -------------------------- */
+.sliderGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.sliderLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-3);
+  white-space: nowrap;
+  min-width: 56px;
+}
+
+.sliderInput {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border-2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.sliderInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--aegean);
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px var(--border-3);
+  cursor: pointer;
+}
+
+.sliderInput::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--aegean);
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px var(--border-3);
+  cursor: pointer;
+}
+
+.sliderValue {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* -- Stats strip (Variant B) -------------------- */
+.statsStrip {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.statChip {
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.statChipLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statChipValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink-1);
+  letter-spacing: -0.5px;
+  margin-top: 2px;
+}
+
+.statChipUnit {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+/* -- Variant B inline layout -------------------- */
+.inlineGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .inlineGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.inlineGaugeSmall {
+  max-width: 140px;
+  margin: 0 auto;
+}
+
+/* -- Boiler list -------------------------------- */
+.boilerList {
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.boilerListHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-1);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-1);
+}
+
+.floorHeader {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  padding: 8px 16px 4px;
+  margin-top: 4px;
+}
+
+.boilerRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-1);
+}
+
+.boilerRow:last-child {
+  border-bottom: none;
+}
+
+.boilerRoomNum {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-1);
+  min-width: 36px;
+}
+
+.boilerBar {
+  flex: 1;
+  height: 8px;
+  border-radius: var(--r-sm);
+  background: var(--border-2);
+  overflow: hidden;
+}
+
+.boilerFill {
+  height: 100%;
+  border-radius: var(--r-sm);
+  transition: width 0.4s ease;
+}
+
+.boilerFillSage {
+  background: var(--sage);
+}
+
+.boilerFillAmber {
+  background: var(--amber);
+}
+
+.boilerFillClay {
+  background: var(--clay);
+}
+
+.boilerRuntime {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-3);
+  min-width: 56px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.boilerOff {
+  font-size: 11px;
+  color: var(--ink-4);
+  flex: 1;
+}
+
+.boilerWarning {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--clay-text);
+  background: var(--clay-surface);
+  border: 1px solid var(--clay-border);
+  border-radius: var(--r-pill);
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+/* -- Solar chart card --------------------------- */
+.solarCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.solarCardHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-1);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-1);
+}
+
+.solarCardBody {
+  padding: 8px 8px 4px;
+}
