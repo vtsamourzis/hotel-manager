@@ -1,0 +1,588 @@
+/* ═══════════════════════════════════════
+   Automations view — automations.module.css
+   All values via CSS custom properties from globals.css
+═══════════════════════════════════════ */
+
+/* ── Page layout ───────────────────── */
+.automationsPage {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ── Header ────────────────────────── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--ink-1);
+}
+
+.newBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--aegean);
+  color: white;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 8px 15px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.1s;
+  white-space: nowrap;
+}
+
+.newBtn:hover {
+  background: var(--aegean-hover);
+}
+
+/* ── Stats strip ───────────────────── */
+.statsStrip {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.statPill {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-2);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+}
+
+.statPill strong {
+  font-weight: 700;
+  color: var(--ink-1);
+}
+
+/* ── Automation grid ───────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Automation card ───────────────── */
+.card {
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--surface-1);
+  transition: border-color 0.2s;
+  position: relative;
+}
+
+.card:hover {
+  border-color: hsla(198, 72%, 24%, 0.3);
+}
+
+.cardDisabled {
+  opacity: 0.6;
+}
+
+.cardAccent {
+  height: 3px;
+  width: 100%;
+}
+
+.cardBody {
+  padding: 14px 16px 12px;
+}
+
+.cardTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cardRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconWrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: hsla(198, 72%, 24%, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--aegean);
+  flex-shrink: 0;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cardLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-1);
+  margin-bottom: 2px;
+}
+
+.cardDesc {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-3);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.lastRun {
+  font-size: 10px;
+  color: var(--ink-4);
+}
+
+/* ── Toggle switch ─────────────────── */
+.toggleBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggleTrack {
+  display: block;
+  width: 36px;
+  height: 20px;
+  border-radius: var(--r-pill);
+  position: relative;
+  transition: background 0.2s;
+}
+
+.toggleOn {
+  background: var(--aegean);
+}
+
+.toggleOff {
+  background: var(--border-3);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(16px);
+}
+
+/* ══════════════════════════════════════
+   ACTIVITY LOG
+══════════════════════════════════════ */
+.logSection {
+  margin-top: 8px;
+}
+
+.logTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-1);
+  margin-bottom: 12px;
+}
+
+.logCard {
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
+  background: var(--surface-1);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.logEntry {
+  display: flex;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-1);
+  border-left: 2px solid var(--aegean);
+}
+
+.logEntry:last-child {
+  border-bottom: none;
+}
+
+.logTimestamp {
+  font-size: 11px;
+  color: var(--ink-4);
+  white-space: nowrap;
+  min-width: 85px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.logContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.logAutomation {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-1);
+  margin-bottom: 1px;
+}
+
+.logDetail {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.logRoomPill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-2);
+  color: var(--ink-2);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── Loading skeleton ──────────────── */
+.logSkeleton {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-1);
+  border-left: 2px solid var(--border-2);
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.logSkeleton:last-child {
+  border-bottom: none;
+}
+
+.skeletonLine {
+  height: 12px;
+  border-radius: var(--r-xs);
+  background: var(--border-2);
+  margin-bottom: 6px;
+}
+
+.skeletonLineShort {
+  width: 60%;
+}
+
+.skeletonLineFull {
+  width: 90%;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ══════════════════════════════════════
+   NEW AUTOMATION PANEL
+══════════════════════════════════════ */
+
+/* Overlay backdrop */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.overlayVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Panel: right slide-in on desktop */
+.panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  width: 400px;
+  background: var(--surface-1);
+  border-left: 1px solid var(--border-2);
+  z-index: 100;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.panelOpen {
+  transform: translateX(0);
+}
+
+/* Mobile: bottom sheet */
+@media (max-width: 768px) {
+  .panel {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    border-left: none;
+    border-top: 1px solid var(--border-2);
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    transform: translateY(100%);
+  }
+
+  .panelOpen {
+    transform: translateY(0);
+  }
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-1);
+  flex-shrink: 0;
+}
+
+.panelTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink-1);
+}
+
+.panelCloseBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  font-size: 16px;
+  transition: background 0.1s, color 0.1s;
+  flex-shrink: 0;
+}
+
+.panelCloseBtn:hover {
+  background: var(--border-1);
+  color: var(--ink-2);
+}
+
+.panelContent {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.dragHandle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-3);
+  margin: 8px auto 0;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .dragHandle {
+    display: block;
+  }
+}
+
+/* ── Form styles ───────────────────── */
+.formGroup {
+  margin-bottom: 14px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 5px;
+}
+
+.formInput,
+.formTextarea,
+.formSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
+  background: var(--surface-1);
+  color: var(--ink-1);
+  font-family: inherit;
+  font-size: 13px;
+  transition: border-color 0.15s;
+}
+
+.formInput:focus,
+.formTextarea:focus,
+.formSelect:focus {
+  outline: none;
+  border-color: var(--aegean-border);
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formError {
+  font-size: 11px;
+  color: var(--clay);
+  margin-top: 4px;
+}
+
+.priorityGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.priorityBtn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-2);
+  background: transparent;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  text-align: center;
+}
+
+.priorityBtn:hover {
+  border-color: var(--border-3);
+  color: var(--ink-1);
+}
+
+.priorityBtnActive {
+  background: var(--aegean);
+  border-color: var(--aegean);
+  color: #fff;
+}
+
+.priorityBtnActive:hover {
+  background: var(--aegean-hover);
+  border-color: var(--aegean-hover);
+  color: #fff;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 10px;
+  background: var(--aegean);
+  color: white;
+  border: none;
+  border-radius: var(--r-sm);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.1s;
+  margin-top: 8px;
+}
+
+.submitBtn:hover {
+  background: var(--aegean-hover);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Confirmation state ────────────── */
+.confirmation {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.confirmIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--sage-surface);
+  border: 1px solid var(--sage-border);
+  color: var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.confirmTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink-1);
+  margin-bottom: 6px;
+}
+
+.confirmSub {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-bottom: 20px;
+}
+
+/* ── Spinner ───────────────────────── */
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.spinnerDot {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border-2);
+  border-top-color: var(--aegean);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
