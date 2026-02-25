@@ -7,6 +7,10 @@
  *
  * SECURITY: HA_URL and HA_TOKEN are server-only env vars — NEVER NEXT_PUBLIC_.
  * The token must never appear in any client bundle or SSE payload.
+ *
+ * NOTE: All mutable singleton state lives on globalThis so it survives
+ * Turbopack HMR in dev mode. Uses a Promise singleton to prevent race
+ * conditions — all concurrent callers await the same initialization.
  */
 import {
   createConnection,
@@ -20,45 +24,61 @@ import {
 import { createSocket } from "./socket";
 import { broadcastToSSEClients } from "./sse-registry";
 import type { HAEntityState, ConnectionStatus } from "./types";
-// ENTITY_TO_ROOM is created in plan 02-02 (same Wave 1).
-// Import is declared here; TypeScript may report an unresolved module error
-// until entity-map.ts is created in plan 02-02.
-import { ENTITY_TO_ROOM } from "./entity-map";
+import { ENTITY_TO_ROOM, TRACKED_ENTITY_IDS } from "./entity-map";
 
-// Module-level singleton state
-let _connection: Connection | null = null;
-let _entityCache: Record<string, HAEntityState> = {};
-let _connectionStatus: ConnectionStatus = "connecting";
+// ---------------------------------------------------------------------------
+// globalThis singleton — survives Turbopack HMR
+// ---------------------------------------------------------------------------
+const g = globalThis as unknown as {
+  __ha_initPromise: Promise<Connection> | null;
+  __ha_entityCache: Record<string, HAEntityState>;
+  __ha_connectionStatus: ConnectionStatus;
+};
+if (!g.__ha_entityCache) g.__ha_entityCache = {};
+if (!g.__ha_connectionStatus) g.__ha_connectionStatus = "connecting";
 
 /**
- * Get (or create) the HA WebSocket connection.
- * Idempotent — safe to call from multiple route handlers concurrently.
+ * Internal initialization — creates connection, seeds cache, subscribes.
+ * Only called once; subsequent calls return the same Promise.
  */
-export async function getHAConnection(): Promise<Connection> {
-  if (_connection) return _connection;
+async function _initConnection(): Promise<Connection> {
+  const haUrl = process.env.HA_URL;
+  const haToken = process.env.HA_TOKEN;
 
-  const auth = createLongLivedTokenAuth(
-    process.env.HA_URL!,
-    process.env.HA_TOKEN!
-  );
+  if (!haUrl || !haToken) {
+    throw new Error(
+      `HA_URL or HA_TOKEN missing. HA_URL=${haUrl ? "set" : "MISSING"}, HA_TOKEN=${haToken ? "set" : "MISSING"}`
+    );
+  }
 
-  _connection = await createConnection({ auth, createSocket });
+  console.log("[HA] Connecting to", haUrl);
+
+  const auth = createLongLivedTokenAuth(haUrl, haToken);
+  const conn = await createConnection({ auth, createSocket });
+
+  console.log("[HA] Connected. Fetching initial states...");
 
   // Seed entity cache with full state on connect
-  const states = await getStates(_connection);
+  const states = await getStates(conn);
   for (const s of states) {
-    _entityCache[s.entity_id] = s as unknown as HAEntityState;
+    g.__ha_entityCache[s.entity_id] = s as unknown as HAEntityState;
   }
-  _connectionStatus = "connected";
+  g.__ha_connectionStatus = "connected";
+
+  console.log(
+    `[HA] Cache seeded: ${states.length} entities total, ${
+      Object.keys(g.__ha_entityCache).length
+    } in cache`
+  );
 
   // Subscribe to all entity updates
-  subscribeEntities(_connection, (entities: HassEntities) => {
+  subscribeEntities(conn, (entities: HassEntities) => {
     for (const [entityId, entityState] of Object.entries(entities)) {
-      // Update cache (all entities — getStates may have missed some)
-      _entityCache[entityId] = entityState as unknown as HAEntityState;
+      // Update cache
+      g.__ha_entityCache[entityId] = entityState as unknown as HAEntityState;
 
-      // Only broadcast room entities to SSE clients (filter noise)
-      if (!(entityId in ENTITY_TO_ROOM)) continue;
+      // Only broadcast tracked entities to SSE clients (filter noise)
+      if (!TRACKED_ENTITY_IDS.has(entityId)) continue;
 
       broadcastToSSEClients(
         JSON.stringify({
@@ -70,21 +90,25 @@ export async function getHAConnection(): Promise<Connection> {
     }
   });
 
+  console.log("[HA] Entity subscription active");
+
   // Handle disconnect events
-  _connection.addEventListener("disconnected", () => {
-    _connectionStatus = "error";
+  conn.addEventListener("disconnected", () => {
+    console.log("[HA] Disconnected from Home Assistant");
+    g.__ha_connectionStatus = "error";
     broadcastToSSEClients(
       JSON.stringify({ type: "connection", status: "error" })
     );
   });
 
   // Handle reconnect — re-fetch full state to reconcile any missed updates
-  _connection.addEventListener("ready", async () => {
-    _connectionStatus = "connected";
+  conn.addEventListener("ready", async () => {
+    console.log("[HA] Reconnected to Home Assistant");
+    g.__ha_connectionStatus = "connected";
     try {
-      const freshStates = await getStates(_connection!);
+      const freshStates = await getStates(conn);
       for (const s of freshStates) {
-        _entityCache[s.entity_id] = s as unknown as HAEntityState;
+        g.__ha_entityCache[s.entity_id] = s as unknown as HAEntityState;
       }
     } catch {
       // Non-fatal — entity cache may be slightly stale until next push
@@ -94,7 +118,25 @@ export async function getHAConnection(): Promise<Connection> {
     );
   });
 
-  return _connection;
+  return conn;
+}
+
+/**
+ * Get (or create) the HA WebSocket connection.
+ * Idempotent — all concurrent callers await the same initialization Promise.
+ * If init fails, the promise is cleared so the next call retries.
+ */
+export function getHAConnection(): Promise<Connection> {
+  if (!g.__ha_initPromise) {
+    g.__ha_initPromise = _initConnection().catch((err) => {
+      // Clear the promise so next call retries instead of returning cached rejection
+      console.error("[HA] Connection failed:", err instanceof Error ? err.message : JSON.stringify(err));
+      g.__ha_initPromise = null;
+      g.__ha_connectionStatus = "error";
+      throw err;
+    });
+  }
+  return g.__ha_initPromise;
 }
 
 /**
@@ -115,7 +157,7 @@ export async function haCallService(
  * Used by the SSE route to send an initial snapshot to newly connected browsers.
  */
 export function getCurrentEntitySnapshot(): Record<string, HAEntityState> {
-  return { ..._entityCache };
+  return { ...g.__ha_entityCache };
 }
 
 /**
@@ -123,5 +165,5 @@ export function getCurrentEntitySnapshot(): Record<string, HAEntityState> {
  * Useful for health-check endpoints.
  */
 export function getConnectionStatus(): ConnectionStatus {
-  return _connectionStatus;
+  return g.__ha_connectionStatus;
 }

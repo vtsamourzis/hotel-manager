@@ -46,3 +46,83 @@ export const FLOOR_ROOMS: Record<"1" | "2" | "3", RoomId[]> = {
   "2": ["201", "202", "203"],
   "3": ["301", "302"],
 };
+
+// ---------------------------------------------------------------------------
+// Phase 3: Energy entities
+// ---------------------------------------------------------------------------
+
+export const ENERGY_ENTITIES = {
+  totalPower:    "sensor.hotel_total_power",
+  todayEnergy:   "sensor.hotel_today_energy",
+  acPower:       "sensor.hotel_ac_power",
+  lightingPower: "sensor.hotel_lighting_power",
+  boilerPower:   "sensor.hotel_boiler_power",
+  otherPower:    "sensor.hotel_other_power",
+  savings:       "sensor.hotel_energy_savings",
+} as const;
+
+export function roomPowerEntity(roomId: RoomId) {
+  return `sensor.room_${roomId}_power` as const;
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: Central solar heater entities
+// ---------------------------------------------------------------------------
+
+export const HEATER_ENTITIES = [
+  {
+    id: "heater_1",
+    temp:          "sensor.solar_heater_1_temp",
+    collectorTemp: "sensor.solar_heater_1_collector",
+    elementOn:     "switch.solar_heater_1_element",
+    minThreshold:  "input_number.solar_heater_1_min",
+    maxThreshold:  "input_number.solar_heater_1_max",
+  },
+  {
+    id: "heater_2",
+    temp:          "sensor.solar_heater_2_temp",
+    collectorTemp: "sensor.solar_heater_2_collector",
+    elementOn:     "switch.solar_heater_2_element",
+    minThreshold:  "input_number.solar_heater_2_min",
+    maxThreshold:  "input_number.solar_heater_2_max",
+  },
+] as const;
+
+// ---------------------------------------------------------------------------
+// Phase 3: Per-room boiler entities
+// ---------------------------------------------------------------------------
+
+export function roomBoilerSwitch(roomId: RoomId) {
+  return `switch.room_${roomId}_boiler` as const;
+}
+export function roomBoilerRuntime(roomId: RoomId) {
+  return `sensor.room_${roomId}_boiler_runtime` as const;
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: Automation entities
+// ---------------------------------------------------------------------------
+
+export const AUTOMATION_ENTITIES = [
+  { id: "ac_window_shutoff",   entityId: "automation.ac_window_shutoff",   label: "Κλιματισμός / Παράθυρο",   desc: "Απενεργοποίηση AC όταν ανοίγει παράθυρο",           icon: "wind" },
+  { id: "presence_lights",     entityId: "automation.presence_lights",     label: "Παρουσία → Φωτισμός",      desc: "Ενεργοποίηση φώτων με ανίχνευση παρουσίας",         icon: "eye" },
+  { id: "checkin_prep",        entityId: "automation.checkin_prep",        label: "Προετοιμασία Δωματίου",    desc: "Welcome Scene 30 λεπτά πριν το check-in",           icon: "sparkles" },
+  { id: "energy_save_ac",      entityId: "automation.energy_save_ac",      label: "Εξοικονόμηση AC",          desc: "Απενεργοποίηση AC μετά από 15 λεπτά απουσίας",      icon: "leaf" },
+  { id: "solar_boiler_mgmt",   entityId: "automation.solar_boiler_mgmt",   label: "Διαχείριση Ηλιακού",       desc: "Ηλεκτρικός θερμοσίφωνας όταν ηλιακός < 45°C",      icon: "sun" },
+  { id: "night_mode",          entityId: "automation.night_mode",          label: "Νυκτερινή Λειτουργία",     desc: "Μείωση κατανάλωσης μετά τις 23:00",                 icon: "moon" },
+] as const;
+
+export const AUTOMATION_IDS = AUTOMATION_ENTITIES.map(a => a.entityId);
+
+// ---------------------------------------------------------------------------
+// Phase 3: Unified tracked entity set (for SSE broadcast filter)
+// ---------------------------------------------------------------------------
+
+export const TRACKED_ENTITY_IDS: Set<string> = new Set([
+  ...ALL_ROOM_ENTITY_IDS,
+  ...Object.values(ENERGY_ENTITIES),
+  ...ROOMS.map(roomPowerEntity),
+  ...HEATER_ENTITIES.flatMap(h => [h.temp, h.collectorTemp, h.elementOn, h.minThreshold, h.maxThreshold]),
+  ...ROOMS.flatMap(r => [roomBoilerSwitch(r), roomBoilerRuntime(r)]),
+  ...AUTOMATION_IDS,
+]);
