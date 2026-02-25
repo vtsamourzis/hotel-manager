@@ -4,7 +4,7 @@ import { haCallService } from "@/lib/ha/connection";
 import { HEATER_ENTITIES } from "@/lib/ha/entity-map";
 
 const VALID_HEATER_IDS: readonly string[] = HEATER_ENTITIES.map((h) => h.id);
-const VALID_ACTIONS = ["element_toggle", "set_min", "set_max"] as const;
+const VALID_ACTIONS = ["element_toggle", "set_min", "set_max", "set_sim_temp"] as const;
 type HeaterAction = (typeof VALID_ACTIONS)[number];
 
 /**
@@ -74,6 +74,19 @@ export async function POST(
         }
         await haCallService("input_number", "set_value", {
           entity_id: heaterConfig.maxThreshold,
+          value,
+        });
+        break;
+      }
+      case "set_sim_temp": {
+        if (typeof value !== "number" || value < 5 || value > 90) {
+          return NextResponse.json(
+            { error: "Value must be a number between 5 and 90" },
+            { status: 400 }
+          );
+        }
+        await haCallService("input_number", "set_value", {
+          entity_id: heaterConfig.tempSim,
           value,
         });
         break;

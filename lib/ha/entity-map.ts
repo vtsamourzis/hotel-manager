@@ -16,10 +16,11 @@ export function entityIds(roomId: RoomId) {
     lightAmbient: `light.room_${roomId}_ambient`,
     lock:         `lock.room_${roomId}_door`,
     boilerSource: `input_select.room_${roomId}_boiler_source`,
-    hotWaterTemp: `input_number.room_${roomId}_hot_water_temp`,
+    temperature:  `input_number.room_${roomId}_temperature`,
     humidity:     `input_number.room_${roomId}_humidity`,
     smokeAlert:   `input_boolean.room_${roomId}_smoke_alert`,
     leakAlert:    `input_boolean.room_${roomId}_leak_alert`,
+    windowOpen:   `input_boolean.room_${roomId}_window_open`,
   } as const;
 }
 
@@ -72,19 +73,21 @@ export function roomPowerEntity(roomId: RoomId) {
 export const HEATER_ENTITIES = [
   {
     id: "heater_1",
-    temp:          "sensor.solar_heater_1_temp",
-    collectorTemp: "sensor.solar_heater_1_collector",
+    temp:          "sensor.solar_heater_1_temperature",
+    collectorTemp: "sensor.solar_heater_1_collector_temperature",
     elementOn:     "switch.solar_heater_1_element",
     minThreshold:  "input_number.solar_heater_1_min",
     maxThreshold:  "input_number.solar_heater_1_max",
+    tempSim:       "input_number.solar_heater_1_temp_sim",
   },
   {
     id: "heater_2",
-    temp:          "sensor.solar_heater_2_temp",
-    collectorTemp: "sensor.solar_heater_2_collector",
+    temp:          "sensor.solar_heater_2_temperature",
+    collectorTemp: "sensor.solar_heater_2_collector_temperature",
     elementOn:     "switch.solar_heater_2_element",
     minThreshold:  "input_number.solar_heater_2_min",
     maxThreshold:  "input_number.solar_heater_2_max",
+    tempSim:       "input_number.solar_heater_2_temp_sim",
   },
 ] as const;
 
@@ -104,12 +107,15 @@ export function roomBoilerRuntime(roomId: RoomId) {
 // ---------------------------------------------------------------------------
 
 export const AUTOMATION_ENTITIES = [
-  { id: "ac_window_shutoff",   entityId: "automation.ac_window_shutoff",   label: "Κλιματισμός / Παράθυρο",   desc: "Απενεργοποίηση AC όταν ανοίγει παράθυρο",           icon: "wind" },
-  { id: "presence_lights",     entityId: "automation.presence_lights",     label: "Παρουσία → Φωτισμός",      desc: "Ενεργοποίηση φώτων με ανίχνευση παρουσίας",         icon: "eye" },
-  { id: "checkin_prep",        entityId: "automation.checkin_prep",        label: "Προετοιμασία Δωματίου",    desc: "Welcome Scene 30 λεπτά πριν το check-in",           icon: "sparkles" },
-  { id: "energy_save_ac",      entityId: "automation.energy_save_ac",      label: "Εξοικονόμηση AC",          desc: "Απενεργοποίηση AC μετά από 15 λεπτά απουσίας",      icon: "leaf" },
-  { id: "solar_boiler_mgmt",   entityId: "automation.solar_boiler_mgmt",   label: "Διαχείριση Ηλιακού",       desc: "Ηλεκτρικός θερμοσίφωνας όταν ηλιακός < 45°C",      icon: "sun" },
-  { id: "night_mode",          entityId: "automation.night_mode",          label: "Νυκτερινή Λειτουργία",     desc: "Μείωση κατανάλωσης μετά τις 23:00",                 icon: "moon" },
+  { id: "ac_window_shutoff",    entityId: "automation.klimatismos_parathuro",              label: "Κλιματισμός / Παράθυρο",          desc: "Απενεργοποίηση AC όταν ανοίγει παράθυρο",           icon: "wind" },
+  { id: "presence_lights",      entityId: "automation.parousia_photismos",                 label: "Παρουσία → Φωτισμός",             desc: "Ενεργοποίηση φώτων με ανίχνευση παρουσίας",         icon: "eye" },
+  { id: "checkin_prep",         entityId: "automation.proetoimasia_domatiou",               label: "Προετοιμασία Δωματίου",           desc: "Welcome Scene 30 λεπτά πριν το check-in",           icon: "sparkles" },
+  { id: "energy_save_ac",       entityId: "automation.exoikonomese_ac",                    label: "Εξοικονόμηση AC",                 desc: "Απενεργοποίηση AC μετά από 15 λεπτά απουσίας",      icon: "leaf" },
+  { id: "solar_heater_auto_on",      entityId: "automation.antistase_eliakou_energopoiese",     label: "Αντίσταση Ηλιακού ON",      desc: "Ενεργοποίηση αντίστασης κάτω από ελάχιστο",  icon: "sun" },
+  { id: "solar_heater_auto_off",     entityId: "automation.antistase_eliakou_apenergopoiese",   label: "Αντίσταση Ηλιακού OFF",     desc: "Απενεργοποίηση αντίστασης πάνω από μέγιστο",  icon: "sun" },
+  { id: "solar_heater_sim_heating",  entityId: "automation.eliakos_prosomoiose_thermanses",     label: "Προσομοίωση Θέρμανσης",     desc: "Αύξηση θερμοκρασίας +1°C/4s όταν αντίσταση ON", icon: "flame" },
+  { id: "night_mode",           entityId: "automation.nukterine_leitourgia",               label: "Νυκτερινή Λειτουργία",            desc: "Μείωση κατανάλωσης μετά τις 23:00",                 icon: "moon" },
+  { id: "boiler_auto_shutoff",  entityId: "automation.automate_apenergopoiese_boiler",     label: "Αυτόματη Απενεργ. Boiler",        desc: "Απενεργοποίηση boiler μετά από 60 λεπτά",           icon: "timer" },
 ] as const;
 
 export const AUTOMATION_IDS = AUTOMATION_ENTITIES.map(a => a.entityId);

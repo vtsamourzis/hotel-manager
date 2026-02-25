@@ -774,21 +774,21 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - input_boolean.room_101_leak_alert
-          - input_boolean.room_102_leak_alert
-          - input_boolean.room_103_leak_alert
-          - input_boolean.room_104_leak_alert
-          - input_boolean.room_105_leak_alert
-          - input_boolean.room_201_leak_alert
-          - input_boolean.room_202_leak_alert
-          - input_boolean.room_203_leak_alert
-          - input_boolean.room_301_leak_alert
-          - input_boolean.room_302_leak_alert
+          - input_boolean.room_101_window_open
+          - input_boolean.room_102_window_open
+          - input_boolean.room_103_window_open
+          - input_boolean.room_104_window_open
+          - input_boolean.room_105_window_open
+          - input_boolean.room_201_window_open
+          - input_boolean.room_202_window_open
+          - input_boolean.room_203_window_open
+          - input_boolean.room_301_window_open
+          - input_boolean.room_302_window_open
         to: "on"
     action:
       - service: climate.turn_off
         target:
-          entity_id: "climate.room_{{ trigger.entity_id.split('_')[1] }}_ac"
+          entity_id: "climate.room_{{ trigger.entity_id.split('.')[1].split('_')[1] }}_ac"
 
   - id: presence_lights
     alias: "Παρουσία → Φωτισμός"
@@ -811,7 +811,7 @@ automation:
     action:
       - service: light.turn_on
         target:
-          entity_id: "light.room_{{ trigger.entity_id.split('_')[1] }}_ceiling"
+          entity_id: "light.room_{{ trigger.entity_id.split('.')[1].split('_')[1] }}_ceiling"
         data:
           brightness_pct: 80
 
@@ -836,13 +836,13 @@ automation:
     action:
       - service: climate.set_temperature
         target:
-          entity_id: "climate.room_{{ trigger.entity_id.split('_')[1] }}_ac"
+          entity_id: "climate.room_{{ trigger.entity_id.split('.')[1].split('_')[1] }}_ac"
         data:
           temperature: 24
           hvac_mode: cool
       - service: light.turn_on
         target:
-          entity_id: "light.room_{{ trigger.entity_id.split('_')[1] }}_ambient"
+          entity_id: "light.room_{{ trigger.entity_id.split('.')[1].split('_')[1] }}_ambient"
         data:
           brightness_pct: 40
 
@@ -869,37 +869,120 @@ automation:
     action:
       - service: climate.turn_off
         target:
-          entity_id: "climate.room_{{ trigger.entity_id.split('_')[1] }}_ac"
+          entity_id: "climate.room_{{ trigger.entity_id.split('.')[1].split('_')[1] }}_ac"
 
-  - id: solar_boiler_mgmt
-    alias: "Διαχείριση Ηλιακού"
-    description: "Ηλεκτρικός θερμοσίφωνας όταν ηλιακός < 45°C"
+  # Auto ON: temp drops below min threshold
+  - id: solar_heater_auto_on
+    alias: "Αντίσταση Ηλιακού - Ενεργοποίηση"
+    description: "Ενεργοποίηση αντίστασης όταν η θερμοκρασία πέσει κάτω από το ελάχιστο όριο"
     mode: single
     trigger:
       - platform: numeric_state
-        entity_id: sensor.solar_heater_1_temp
-        below: 45
+        entity_id: sensor.solar_heater_1_temperature
+        below: input_number.solar_heater_1_min
       - platform: numeric_state
-        entity_id: sensor.solar_heater_2_temp
-        below: 45
+        entity_id: sensor.solar_heater_2_temperature
+        below: input_number.solar_heater_2_min
     action:
       - choose:
           - conditions:
               - condition: numeric_state
-                entity_id: sensor.solar_heater_1_temp
-                below: 45
+                entity_id: sensor.solar_heater_1_temperature
+                below: input_number.solar_heater_1_min
             sequence:
               - service: switch.turn_on
                 target:
                   entity_id: switch.solar_heater_1_element
           - conditions:
               - condition: numeric_state
-                entity_id: sensor.solar_heater_2_temp
-                below: 45
+                entity_id: sensor.solar_heater_2_temperature
+                below: input_number.solar_heater_2_min
             sequence:
               - service: switch.turn_on
                 target:
                   entity_id: switch.solar_heater_2_element
+
+  # Auto OFF: temp reaches max threshold
+  - id: solar_heater_auto_off
+    alias: "Αντίσταση Ηλιακού - Απενεργοποίηση"
+    description: "Απενεργοποίηση αντίστασης όταν η θερμοκρασία φτάσει το μέγιστο όριο"
+    mode: single
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.solar_heater_1_temperature
+        above: input_number.solar_heater_1_max
+      - platform: numeric_state
+        entity_id: sensor.solar_heater_2_temperature
+        above: input_number.solar_heater_2_max
+    action:
+      - choose:
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.solar_heater_1_temperature
+                above: input_number.solar_heater_1_max
+            sequence:
+              - service: switch.turn_off
+                target:
+                  entity_id: switch.solar_heater_1_element
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.solar_heater_2_temperature
+                above: input_number.solar_heater_2_max
+            sequence:
+              - service: switch.turn_off
+                target:
+                  entity_id: switch.solar_heater_2_element
+
+  # Heating simulation: while element ON, increment temp_sim every 4 seconds
+  - id: solar_heater_sim_heating
+    alias: "Ηλιακός - Προσομοίωση Θέρμανσης"
+    description: "Αύξηση θερμοκρασίας κατά 1°C κάθε 4 δευτερόλεπτα όταν η αντίσταση είναι ενεργή"
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: switch.solar_heater_1_element
+        to: "on"
+      - platform: state
+        entity_id: switch.solar_heater_2_element
+        to: "on"
+    action:
+      - repeat:
+          while:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: switch.solar_heater_1_element
+                  state: "on"
+                - condition: state
+                  entity_id: switch.solar_heater_2_element
+                  state: "on"
+          sequence:
+            - delay:
+                seconds: 4
+            - choose:
+                - conditions:
+                    - condition: state
+                      entity_id: switch.solar_heater_1_element
+                      state: "on"
+                  sequence:
+                    - service: input_number.set_value
+                      target:
+                        entity_id: input_number.solar_heater_1_temp_sim
+                      data:
+                        value: >
+                          {{ [states('input_number.solar_heater_1_temp_sim') | float + 1, 95] | min }}
+            - choose:
+                - conditions:
+                    - condition: state
+                      entity_id: switch.solar_heater_2_element
+                      state: "on"
+                  sequence:
+                    - service: input_number.set_value
+                      target:
+                        entity_id: input_number.solar_heater_2_temp_sim
+                      data:
+                        value: >
+                          {{ [states('input_number.solar_heater_2_temp_sim') | float + 1, 95] | min }}
 
   - id: night_mode
     alias: "Νυκτερινή Λειτουργία"
