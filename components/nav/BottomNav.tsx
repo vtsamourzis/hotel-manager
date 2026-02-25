@@ -2,18 +2,19 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, BedDouble, CalendarDays,
+  LayoutDashboard, BedDouble, BarChart2, Droplets,
   Zap, Settings, LifeBuoy
 } from "lucide-react"
 import styles from "./nav.module.css"
 
 const NAV_ITEMS = [
   { href: "/overview",    Icon: LayoutDashboard, label: "Αρχική" },
-  { href: "/rooms",       Icon: BedDouble,        label: "Δωμάτια" },
-  { href: "/bookings",    Icon: CalendarDays,     label: "Κρατήσεις" },
-  { href: "/automations", Icon: Zap,              label: "Αυτοματισμοί" },
-  { href: "/system",      Icon: Settings,         label: "Σύστημα" },
-  { href: "/support",     Icon: LifeBuoy,         label: "Υποστήριξη" },
+  { href: "/rooms",       Icon: BedDouble,       label: "Δωμάτια" },
+  { href: "/energy",      Icon: BarChart2,       label: "Ενέργεια" },
+  { href: "/hotwater",    Icon: Droplets,        label: "Ζεστό Νερό" },
+  { href: "/automations", Icon: Zap,             label: "Αυτοματισμοί" },
+  { href: "/system",      Icon: Settings,        label: "Σύστημα" },
+  { href: "/support",     Icon: LifeBuoy,        label: "Υποστήριξη" },
 ] as const
 
 export function BottomNav({ alertCount = 0 }: { alertCount?: number }) {

@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, BedDouble, CalendarDays,
+  LayoutDashboard, BedDouble, BarChart2, Droplets,
   Zap, Settings, LifeBuoy
 } from "lucide-react"
 import styles from "./nav.module.css"
@@ -15,11 +15,12 @@ interface SidebarProps {
 
 const NAV_ITEMS = [
   { href: "/overview",    Icon: LayoutDashboard, label: "Αρχική",       alertable: true },
-  { href: "/rooms",       Icon: BedDouble,        label: "Δωμάτια",      alertable: false },
-  { href: "/bookings",    Icon: CalendarDays,     label: "Κρατήσεις",    alertable: false },
-  { href: "/automations", Icon: Zap,              label: "Αυτοματισμοί", alertable: false },
-  { href: "/system",      Icon: Settings,         label: "Σύστημα",      alertable: true },
-  { href: "/support",     Icon: LifeBuoy,         label: "Υποστήριξη",   alertable: false },
+  { href: "/rooms",       Icon: BedDouble,       label: "Δωμάτια",      alertable: false },
+  { href: "/energy",      Icon: BarChart2,       label: "Ενέργεια",     alertable: false },
+  { href: "/hotwater",    Icon: Droplets,        label: "Ζεστό Νερό",   alertable: false },
+  { href: "/automations", Icon: Zap,             label: "Αυτοματισμοί", alertable: false },
+  { href: "/system",      Icon: Settings,        label: "Σύστημα",      alertable: true },
+  { href: "/support",     Icon: LifeBuoy,        label: "Υποστήριξη",   alertable: false },
 ] as const
 
 export function Sidebar({ userName = "Manager", userEmail = "", alertCount = 0 }: SidebarProps) {
