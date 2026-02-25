@@ -61,6 +61,14 @@ export default function HotWaterPage() {
     });
   }, []);
 
+  const handleSetSimTemp = useCallback((heaterId: string, val: number) => {
+    fetch(`/api/hotwater/heater/${heaterId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "set_sim_temp", value: val }),
+    });
+  }, []);
+
   // Stats for Variant B
   const avgTemp = heaters.length
     ? Math.round(heaters.reduce((sum, h) => sum + h.temp, 0) / heaters.length)
@@ -108,6 +116,7 @@ export default function HotWaterPage() {
                 onElementToggle={(on) => handleElementToggle(h.id, on)}
                 onSetMin={(val) => handleSetMin(h.id, val)}
                 onSetMax={(val) => handleSetMax(h.id, val)}
+                onSetSimTemp={(val) => handleSetSimTemp(h.id, val)}
               />
             ))}
           </div>
@@ -158,6 +167,7 @@ export default function HotWaterPage() {
                   onElementToggle={(on) => handleElementToggle(h.id, on)}
                   onSetMin={(val) => handleSetMin(h.id, val)}
                   onSetMax={(val) => handleSetMax(h.id, val)}
+                  onSetSimTemp={(val) => handleSetSimTemp(h.id, val)}
                 />
               ))}
             </div>
