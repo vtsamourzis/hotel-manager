@@ -19,4 +19,8 @@ function getDb() {
   return global._db
 }
 
-export const db = getDb()
+export const db = new Proxy({} as ReturnType<typeof Database>, {
+  get(_target, prop) {
+    return (getDb() as unknown as Record<string | symbol, unknown>)[prop]
+  },
+})
