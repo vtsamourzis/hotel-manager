@@ -6,7 +6,7 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const res = await fetch(`${process.env.HA_URL}/api/states/weather.home`, {
+    const res = await fetch(`${process.env.HA_URL}/api/states/weather.forecast_home`, {
       headers: { Authorization: `Bearer ${process.env.HA_TOKEN}` },
       next: { revalidate: 300 }, // cache 5 min — weather doesn't need real-time
     });

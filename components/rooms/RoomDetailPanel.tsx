@@ -9,6 +9,7 @@ import { ACPanel } from "./panels/ACPanel";
 import { LightsPanel } from "./panels/LightsPanel";
 import { LockControl } from "./panels/LockControl";
 import { BoilerPanel } from "./panels/BoilerPanel";
+import { WindowToggle } from "./panels/WindowToggle";
 import { CheckInModal } from "./CheckInModal";
 import styles from "./rooms.module.css";
 
@@ -87,6 +88,42 @@ function PanelContent() {
         {/* Sub-panels — shown only when a room is selected */}
         {selectedRoomId && room ? (
           <div className={styles.panelContent}>
+            {/* 0. Alerts — smoke, leak, window, door */}
+            {(room.smokeAlert?.state === "on" ||
+              room.leakAlert?.state === "on" ||
+              room.windowOpen?.state === "on" ||
+              room.lock?.state === "unlocked") && (
+              <div className={styles.panelSection}>
+                <div className={styles.panelSectionTitle}>Ειδοποιήσεις</div>
+                <div className={styles.alertList}>
+                  {room.smokeAlert?.state === "on" && (
+                    <div className={`${styles.alertRow} ${styles.alertDanger}`}>
+                      <span className={styles.alertDot} />
+                      <span>Ανιχνεύθηκε καπνός</span>
+                    </div>
+                  )}
+                  {room.leakAlert?.state === "on" && (
+                    <div className={`${styles.alertRow} ${styles.alertDanger}`}>
+                      <span className={styles.alertDot} />
+                      <span>Ανιχνεύθηκε διαρροή</span>
+                    </div>
+                  )}
+                  {room.windowOpen?.state === "on" && (
+                    <div className={`${styles.alertRow} ${styles.alertWarning}`}>
+                      <span className={styles.alertDotWarning} />
+                      <span>Παράθυρο ανοιχτό</span>
+                    </div>
+                  )}
+                  {room.lock?.state === "unlocked" && (
+                    <div className={`${styles.alertRow} ${styles.alertWarning}`}>
+                      <span className={styles.alertDotWarning} />
+                      <span>Πόρτα ξεκλείδωτη</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* 1. Status buttons */}
             <div className={styles.panelSection}>
               <div className={styles.panelSectionTitle}>Κατάσταση</div>
@@ -107,6 +144,12 @@ function PanelContent() {
               <ACPanel roomId={selectedRoomId} acState={room.acState} />
             </div>
 
+            {/* 3b. Window toggle (demo: triggers AC shutoff automation) */}
+            <div className={styles.panelSection}>
+              <div className={styles.panelSectionTitle}>Παράθυρο</div>
+              <WindowToggle roomId={selectedRoomId} windowState={room.windowOpen} />
+            </div>
+
             {/* 4. Lights panel */}
             <div className={styles.panelSection}>
               <div className={styles.panelSectionTitle}>Φωτισμός</div>
@@ -124,9 +167,21 @@ function PanelContent() {
               <div className={styles.panelSectionTitle}>Θερμοσίφωνας</div>
               <BoilerPanel
                 boilerSource={room.boilerSource}
-                hotWaterTemp={room.hotWaterTemp}
               />
             </div>
+
+            {/* Room temperature */}
+            {room.temperature && (
+              <div className={styles.panelSection}>
+                <div className={styles.panelSectionTitle}>Θερμοκρασία</div>
+                <div className={styles.humidityRow}>
+                  <span className={styles.humidityValue}>
+                    {Number(room.temperature.state).toFixed(1)}°C
+                  </span>
+                  <span className={styles.humidityLabel}>θερμοκρασία δωματίου</span>
+                </div>
+              </div>
+            )}
 
             {/* Humidity — read-only from input_number entity */}
             {room.humidity && (
@@ -140,6 +195,7 @@ function PanelContent() {
                 </div>
               </div>
             )}
+
           </div>
         ) : (
           <div

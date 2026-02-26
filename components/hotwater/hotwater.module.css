@@ -281,6 +281,44 @@
   text-align: right;
 }
 
+/* -- Simulation section ------------------------- */
+.simSection {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-1);
+}
+
+.simHeader {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  margin-bottom: 8px;
+}
+
+.simHint {
+  font-size: 9.5px;
+  color: var(--ink-4);
+  margin-top: 4px;
+}
+
+/* -- Colored slider variants -------------------- */
+.sliderSim::-webkit-slider-thumb { background: hsl(220, 8%, 60%); }
+.sliderSim::-moz-range-thumb { background: hsl(220, 8%, 60%); }
+
+.sliderAmber::-webkit-slider-thumb { background: hsl(38, 76%, 48%); }
+.sliderAmber::-moz-range-thumb { background: hsl(38, 76%, 48%); }
+
+.sliderClay::-webkit-slider-thumb { background: hsl(8, 56%, 44%); }
+.sliderClay::-moz-range-thumb { background: hsl(8, 56%, 44%); }
+
+.sliderLabelAmber { color: hsl(38, 60%, 36%); }
+.sliderLabelClay { color: hsl(8, 45%, 38%); }
+
+.sliderValueAmber { color: hsl(38, 60%, 36%); }
+.sliderValueClay { color: hsl(8, 45%, 38%); }
+
 /* -- Stats strip (Variant B) -------------------- */
 .statsStrip {
   display: flex;

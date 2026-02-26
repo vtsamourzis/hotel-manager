@@ -64,7 +64,7 @@ export function OfflineOverlay() {
           margin: 0,
         }}
       >
-        Αποσύνδεση από το Home Assistant
+        Αναμονή σύνδεσης
       </h2>
 
       {/* Last connected */}
@@ -75,7 +75,7 @@ export function OfflineOverlay() {
           margin: 0,
         }}
       >
-        Τελευταία σύνδεση: {lastConnectedFormatted}
+        Το σύστημα δεν είναι διαθέσιμο αυτή τη στιγμή
       </p>
 
       {/* Retry subtext */}
@@ -87,7 +87,7 @@ export function OfflineOverlay() {
           opacity: 0.75,
         }}
       >
-        Επανασύνδεση σε εξέλιξη...
+        Επανασύνδεση σε εξέλιξη…
       </p>
 
       {/* Spinner keyframe injected inline — avoids needing a CSS file */}

@@ -1,0 +1,252 @@
+# ==========================================================
+# Room 203 — AegeanSea Hotel Package
+# Floor 2 | Entity prefix: room_203_
+#
+# Entity IDs match entity-map.ts exactly.
+# Modern template format (action: not service:)
+# ==========================================================
+
+# --- Status & boiler source ---
+input_select:
+  room_203_status:
+    name: "Room 203 Status"
+    options:
+      - Occupied
+      - Vacant
+      - Cleaning
+      - Preparing
+    initial: Vacant
+    icon: mdi:door
+
+  room_203_boiler_source:
+    name: "Room 203 Boiler Source"
+    options:
+      - Solar
+      - Electrical
+    initial: Solar
+    icon: mdi:water-boiler
+
+# --- Temperatures, humidity, brightness helpers ---
+input_number:
+  room_203_hot_water_temp:
+    name: "Room 203 Hot Water Temperature"
+    min: 20
+    max: 80
+    step: 0.5
+    initial: 52
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer-water
+
+  room_203_humidity:
+    name: "Room 203 Humidity"
+    min: 20
+    max: 95
+    step: 1
+    initial: 52
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+
+  room_203_temperature:
+    name: "Room 203 Temperature"
+    min: 16
+    max: 35
+    step: 0.5
+    initial: 23
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+
+  room_203_ceiling_brightness:
+    name: "Room 203 Ceiling Brightness"
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+
+  room_203_side_1_brightness:
+    name: "Room 203 Side 1 Brightness"
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+
+  room_203_side_2_brightness:
+    name: "Room 203 Side 2 Brightness"
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+
+  room_203_ambient_brightness:
+    name: "Room 203 Ambient Brightness"
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+
+# --- Alerts, light on/off, lock, climate sim helpers ---
+input_boolean:
+  room_203_smoke_alert:
+    name: "Room 203 Smoke Alert"
+    initial: false
+    icon: mdi:smoke-detector-alert
+
+  room_203_leak_alert:
+    name: "Room 203 Leak Alert"
+    initial: false
+    icon: mdi:water-alert
+
+  room_203_ceiling_on:
+    name: "Room 203 Ceiling Light"
+    initial: false
+    icon: mdi:ceiling-light
+
+  room_203_side_1_on:
+    name: "Room 203 Side Light 1"
+    initial: false
+    icon: mdi:lamp
+
+  room_203_side_2_on:
+    name: "Room 203 Side Light 2"
+    initial: false
+    icon: mdi:lamp
+
+  room_203_ambient_on:
+    name: "Room 203 Ambient Light"
+    initial: false
+    icon: mdi:led-strip
+
+  room_203_locked:
+    name: "Room 203 Door Locked"
+    initial: true
+    icon: mdi:lock
+
+  room_203_heater_sim:
+    name: "Room 203 Heater Simulator"
+    initial: false
+    icon: mdi:radiator
+
+  room_203_cooler_sim:
+    name: "Room 203 Cooler Simulator"
+    initial: false
+    icon: mdi:snowflake
+
+  room_203_window_open:
+    name: "Room 203 Window Open"
+    initial: false
+    icon: mdi:window-open-variant
+
+# --- Template lights + Template lock (modern format) ---
+template:
+  - light:
+      - name: "room_203_ceiling"
+        unique_id: "room_203_ceiling_light"
+        state: "{{ states('input_boolean.room_203_ceiling_on') }}"
+        level: >
+          {{ (states('input_number.room_203_ceiling_brightness') | float / 100 * 255) | int }}
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_203_ceiling_on
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_203_ceiling_on
+        set_level:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.room_203_ceiling_brightness
+            data:
+              value: "{{ (brightness / 255 * 100) | int }}"
+
+      - name: "room_203_side_1"
+        unique_id: "room_203_side_1_light"
+        state: "{{ states('input_boolean.room_203_side_1_on') }}"
+        level: >
+          {{ (states('input_number.room_203_side_1_brightness') | float / 100 * 255) | int }}
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_203_side_1_on
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_203_side_1_on
+        set_level:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.room_203_side_1_brightness
+            data:
+              value: "{{ (brightness / 255 * 100) | int }}"
+
+      - name: "room_203_side_2"
+        unique_id: "room_203_side_2_light"
+        state: "{{ states('input_boolean.room_203_side_2_on') }}"
+        level: >
+          {{ (states('input_number.room_203_side_2_brightness') | float / 100 * 255) | int }}
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_203_side_2_on
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_203_side_2_on
+        set_level:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.room_203_side_2_brightness
+            data:
+              value: "{{ (brightness / 255 * 100) | int }}"
+
+      - name: "room_203_ambient"
+        unique_id: "room_203_ambient_light"
+        state: "{{ states('input_boolean.room_203_ambient_on') }}"
+        level: >
+          {{ (states('input_number.room_203_ambient_brightness') | float / 100 * 255) | int }}
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_203_ambient_on
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_203_ambient_on
+        set_level:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.room_203_ambient_brightness
+            data:
+              value: "{{ (brightness / 255 * 100) | int }}"
+
+  - lock:
+      - name: "room_203_door"
+        unique_id: "room_203_door_lock"
+        state: "{{ is_state('input_boolean.room_203_locked', 'on') }}"
+        lock:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_203_locked
+        unlock:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_203_locked
+
+# --- Climate (HACS dual_mode_generic_thermostat) ---
+climate:
+  - platform: dualmode_generic
+    name: "room_203_ac"
+    unique_id: "room_203_ac_climate"
+    heater: input_boolean.room_203_heater_sim
+    cooler: input_boolean.room_203_cooler_sim
+    target_sensor: input_number.room_203_temperature
+    min_temp: 16
+    max_temp: 30
+    initial_hvac_mode: "off"

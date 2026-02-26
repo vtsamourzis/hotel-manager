@@ -2270,7 +2270,7 @@ template:
 # Entity IDs: climate.room_{id}_ac
 # Heating actuator: input_boolean.room_{id}_heater_sim
 # Cooling actuator: input_boolean.room_{id}_cooler_sim
-# Temperature sensor: input_number.room_{id}_humidity (reused as temp proxy for demo)
+# Temperature sensor: input_number.room_{id}_temperature
 # ==============================================================================
 
 climate:
@@ -2279,7 +2279,7 @@ climate:
     unique_id: "room_101_ac_climate"
     heater: input_boolean.room_101_heater_sim
     cooler: input_boolean.room_101_cooler_sim
-    target_sensor: input_number.room_101_humidity
+    target_sensor: input_number.room_101_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2289,7 +2289,7 @@ climate:
     unique_id: "room_102_ac_climate"
     heater: input_boolean.room_102_heater_sim
     cooler: input_boolean.room_102_cooler_sim
-    target_sensor: input_number.room_102_humidity
+    target_sensor: input_number.room_102_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2299,7 +2299,7 @@ climate:
     unique_id: "room_103_ac_climate"
     heater: input_boolean.room_103_heater_sim
     cooler: input_boolean.room_103_cooler_sim
-    target_sensor: input_number.room_103_humidity
+    target_sensor: input_number.room_103_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2309,7 +2309,7 @@ climate:
     unique_id: "room_104_ac_climate"
     heater: input_boolean.room_104_heater_sim
     cooler: input_boolean.room_104_cooler_sim
-    target_sensor: input_number.room_104_humidity
+    target_sensor: input_number.room_104_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2319,7 +2319,7 @@ climate:
     unique_id: "room_105_ac_climate"
     heater: input_boolean.room_105_heater_sim
     cooler: input_boolean.room_105_cooler_sim
-    target_sensor: input_number.room_105_humidity
+    target_sensor: input_number.room_105_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2329,7 +2329,7 @@ climate:
     unique_id: "room_201_ac_climate"
     heater: input_boolean.room_201_heater_sim
     cooler: input_boolean.room_201_cooler_sim
-    target_sensor: input_number.room_201_humidity
+    target_sensor: input_number.room_201_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2339,7 +2339,7 @@ climate:
     unique_id: "room_202_ac_climate"
     heater: input_boolean.room_202_heater_sim
     cooler: input_boolean.room_202_cooler_sim
-    target_sensor: input_number.room_202_humidity
+    target_sensor: input_number.room_202_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2349,7 +2349,7 @@ climate:
     unique_id: "room_203_ac_climate"
     heater: input_boolean.room_203_heater_sim
     cooler: input_boolean.room_203_cooler_sim
-    target_sensor: input_number.room_203_humidity
+    target_sensor: input_number.room_203_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2359,7 +2359,7 @@ climate:
     unique_id: "room_301_ac_climate"
     heater: input_boolean.room_301_heater_sim
     cooler: input_boolean.room_301_cooler_sim
-    target_sensor: input_number.room_301_humidity
+    target_sensor: input_number.room_301_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"
@@ -2369,7 +2369,7 @@ climate:
     unique_id: "room_302_ac_climate"
     heater: input_boolean.room_302_heater_sim
     cooler: input_boolean.room_302_cooler_sim
-    target_sensor: input_number.room_302_humidity
+    target_sensor: input_number.room_302_temperature
     min_temp: 16
     max_temp: 30
     initial_hvac_mode: "off"

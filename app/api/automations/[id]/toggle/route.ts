@@ -3,7 +3,9 @@ import { auth } from "@/lib/auth";
 import { haCallService } from "@/lib/ha/connection";
 import { AUTOMATION_ENTITIES } from "@/lib/ha/entity-map";
 
-const VALID_IDS: Set<string> = new Set(AUTOMATION_ENTITIES.map((a) => a.id));
+const ID_TO_ENTITY: Record<string, string> = Object.fromEntries(
+  AUTOMATION_ENTITIES.map((a) => [a.id, a.entityId])
+);
 
 export async function POST(
   req: NextRequest,
@@ -14,8 +16,9 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
+  const entityId = ID_TO_ENTITY[id];
 
-  if (!VALID_IDS.has(id)) {
+  if (!entityId) {
     return NextResponse.json(
       { error: "Μη έγκυρος αυτοματισμός" },
       { status: 400 }
@@ -36,7 +39,7 @@ export async function POST(
     await haCallService(
       "automation",
       enabled ? "turn_on" : "turn_off",
-      { entity_id: `automation.${id}` }
+      { entity_id: entityId }
     );
     return NextResponse.json({ ok: true });
   } catch {

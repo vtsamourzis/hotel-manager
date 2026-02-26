@@ -1,0 +1,461 @@
+# ==========================================================
+# AegeanSea Hotel — Hot Water Management Package
+# Phase 3 | Central solar heaters + per-room boilers
+#
+# Loaded automatically via: homeassistant: packages: !include_dir_named packages
+# ==========================================================
+
+# --- Central solar heater simulators ---
+input_number:
+  solar_heater_1_temp_sim:
+    name: "Solar Heater 1 Temperature Simulator"
+    min: 10
+    max: 95
+    step: 0.5
+    initial: 52.0
+    unit_of_measurement: "°C"
+    mode: slider
+
+  solar_heater_1_collector_sim:
+    name: "Solar Heater 1 Collector Temperature Simulator"
+    min: 10
+    max: 120
+    step: 0.5
+    initial: 58.0
+    unit_of_measurement: "°C"
+    mode: slider
+
+  solar_heater_2_temp_sim:
+    name: "Solar Heater 2 Temperature Simulator"
+    min: 10
+    max: 95
+    step: 0.5
+    initial: 48.0
+    unit_of_measurement: "°C"
+    mode: slider
+
+  solar_heater_2_collector_sim:
+    name: "Solar Heater 2 Collector Temperature Simulator"
+    min: 10
+    max: 120
+    step: 0.5
+    initial: 54.0
+    unit_of_measurement: "°C"
+    mode: slider
+
+  # Central heater thresholds (user-adjustable via dashboard)
+  solar_heater_1_min:
+    name: "Solar Heater 1 Min Threshold"
+    min: 20
+    max: 80
+    step: 1
+    initial: 40
+    unit_of_measurement: "°C"
+    mode: slider
+
+  solar_heater_1_max:
+    name: "Solar Heater 1 Max Threshold"
+    min: 20
+    max: 80
+    step: 1
+    initial: 65
+    unit_of_measurement: "°C"
+    mode: slider
+
+  solar_heater_2_min:
+    name: "Solar Heater 2 Min Threshold"
+    min: 20
+    max: 80
+    step: 1
+    initial: 40
+    unit_of_measurement: "°C"
+    mode: slider
+
+  solar_heater_2_max:
+    name: "Solar Heater 2 Max Threshold"
+    min: 20
+    max: 80
+    step: 1
+    initial: 65
+    unit_of_measurement: "°C"
+    mode: slider
+
+  # Per-room boiler runtime simulators (minutes)
+  room_101_boiler_runtime_sim:
+    name: "Room 101 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 0
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_102_boiler_runtime_sim:
+    name: "Room 102 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 25
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_103_boiler_runtime_sim:
+    name: "Room 103 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 0
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_104_boiler_runtime_sim:
+    name: "Room 104 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 0
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_105_boiler_runtime_sim:
+    name: "Room 105 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 42
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_201_boiler_runtime_sim:
+    name: "Room 201 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 0
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_202_boiler_runtime_sim:
+    name: "Room 202 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 18
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_203_boiler_runtime_sim:
+    name: "Room 203 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 0
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_301_boiler_runtime_sim:
+    name: "Room 301 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 0
+    unit_of_measurement: "min"
+    mode: slider
+
+  room_302_boiler_runtime_sim:
+    name: "Room 302 Boiler Runtime Simulator"
+    min: 0
+    max: 480
+    step: 1
+    initial: 0
+    unit_of_measurement: "min"
+    mode: slider
+
+# --- Central heater elements + per-room boiler switches ---
+input_boolean:
+  solar_heater_1_element:
+    name: "Solar Heater 1 Electrical Element"
+    initial: false
+
+  solar_heater_2_element:
+    name: "Solar Heater 2 Electrical Element"
+    initial: false
+
+  room_101_boiler:
+    name: "Room 101 Boiler"
+    initial: false
+
+  room_102_boiler:
+    name: "Room 102 Boiler"
+    initial: true
+
+  room_103_boiler:
+    name: "Room 103 Boiler"
+    initial: false
+
+  room_104_boiler:
+    name: "Room 104 Boiler"
+    initial: false
+
+  room_105_boiler:
+    name: "Room 105 Boiler"
+    initial: true
+
+  room_201_boiler:
+    name: "Room 201 Boiler"
+    initial: false
+
+  room_202_boiler:
+    name: "Room 202 Boiler"
+    initial: true
+
+  room_203_boiler:
+    name: "Room 203 Boiler"
+    initial: false
+
+  room_301_boiler:
+    name: "Room 301 Boiler"
+    initial: false
+
+  room_302_boiler:
+    name: "Room 302 Boiler"
+    initial: false
+
+# --- Template sensors + switches ---
+template:
+  - sensor:
+      # Central solar heater temperature sensors
+      - name: "Solar Heater 1 Temperature"
+        unique_id: solar_heater_1_temp
+        device_class: temperature
+        state_class: measurement
+        unit_of_measurement: "°C"
+        state: "{{ states('input_number.solar_heater_1_temp_sim') }}"
+
+      - name: "Solar Heater 1 Collector Temperature"
+        unique_id: solar_heater_1_collector
+        device_class: temperature
+        state_class: measurement
+        unit_of_measurement: "°C"
+        state: "{{ states('input_number.solar_heater_1_collector_sim') }}"
+
+      - name: "Solar Heater 2 Temperature"
+        unique_id: solar_heater_2_temp
+        device_class: temperature
+        state_class: measurement
+        unit_of_measurement: "°C"
+        state: "{{ states('input_number.solar_heater_2_temp_sim') }}"
+
+      - name: "Solar Heater 2 Collector Temperature"
+        unique_id: solar_heater_2_collector
+        device_class: temperature
+        state_class: measurement
+        unit_of_measurement: "°C"
+        state: "{{ states('input_number.solar_heater_2_collector_sim') }}"
+
+      # Per-room boiler runtime sensors
+      - name: "Room 101 Boiler Runtime"
+        unique_id: room_101_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_101_boiler_runtime_sim') }}"
+
+      - name: "Room 102 Boiler Runtime"
+        unique_id: room_102_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_102_boiler_runtime_sim') }}"
+
+      - name: "Room 103 Boiler Runtime"
+        unique_id: room_103_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_103_boiler_runtime_sim') }}"
+
+      - name: "Room 104 Boiler Runtime"
+        unique_id: room_104_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_104_boiler_runtime_sim') }}"
+
+      - name: "Room 105 Boiler Runtime"
+        unique_id: room_105_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_105_boiler_runtime_sim') }}"
+
+      - name: "Room 201 Boiler Runtime"
+        unique_id: room_201_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_201_boiler_runtime_sim') }}"
+
+      - name: "Room 202 Boiler Runtime"
+        unique_id: room_202_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_202_boiler_runtime_sim') }}"
+
+      - name: "Room 203 Boiler Runtime"
+        unique_id: room_203_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_203_boiler_runtime_sim') }}"
+
+      - name: "Room 301 Boiler Runtime"
+        unique_id: room_301_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_301_boiler_runtime_sim') }}"
+
+      - name: "Room 302 Boiler Runtime"
+        unique_id: room_302_boiler_runtime
+        state_class: measurement
+        unit_of_measurement: "min"
+        state: "{{ states('input_number.room_302_boiler_runtime_sim') }}"
+
+  # Template switches (expose input_booleans as proper switches)
+  - switch:
+      - name: "Solar Heater 1 Element"
+        unique_id: solar_heater_1_element
+        state: "{{ states('input_boolean.solar_heater_1_element') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.solar_heater_1_element
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.solar_heater_1_element
+
+      - name: "Solar Heater 2 Element"
+        unique_id: solar_heater_2_element
+        state: "{{ states('input_boolean.solar_heater_2_element') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.solar_heater_2_element
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.solar_heater_2_element
+
+      - name: "Room 101 Boiler"
+        unique_id: room_101_boiler
+        state: "{{ states('input_boolean.room_101_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_101_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_101_boiler
+
+      - name: "Room 102 Boiler"
+        unique_id: room_102_boiler
+        state: "{{ states('input_boolean.room_102_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_102_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_102_boiler
+
+      - name: "Room 103 Boiler"
+        unique_id: room_103_boiler
+        state: "{{ states('input_boolean.room_103_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_103_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_103_boiler
+
+      - name: "Room 104 Boiler"
+        unique_id: room_104_boiler
+        state: "{{ states('input_boolean.room_104_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_104_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_104_boiler
+
+      - name: "Room 105 Boiler"
+        unique_id: room_105_boiler
+        state: "{{ states('input_boolean.room_105_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_105_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_105_boiler
+
+      - name: "Room 201 Boiler"
+        unique_id: room_201_boiler
+        state: "{{ states('input_boolean.room_201_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_201_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_201_boiler
+
+      - name: "Room 202 Boiler"
+        unique_id: room_202_boiler
+        state: "{{ states('input_boolean.room_202_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_202_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_202_boiler
+
+      - name: "Room 203 Boiler"
+        unique_id: room_203_boiler
+        state: "{{ states('input_boolean.room_203_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_203_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_203_boiler
+
+      - name: "Room 301 Boiler"
+        unique_id: room_301_boiler
+        state: "{{ states('input_boolean.room_301_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_301_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_301_boiler
+
+      - name: "Room 302 Boiler"
+        unique_id: room_302_boiler
+        state: "{{ states('input_boolean.room_302_boiler') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.room_302_boiler
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.room_302_boiler

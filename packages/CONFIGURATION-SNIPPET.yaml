@@ -1,0 +1,40 @@
+# ==========================================================
+# AegeanSea Hotel — configuration.yaml snippet
+# ==========================================================
+#
+# Add this to your Home Assistant configuration.yaml to load
+# all room packages and Phase 3 entities automatically.
+#
+# PREREQUISITES:
+#   1. Install HACS (https://hacs.xyz)
+#   2. Install "Dual Mode Generic Thermostat" via HACS
+#   3. Copy the entire packages/ folder to /config/packages/
+#      (EXCEPT automations_phase3.yaml — see step 4)
+#   4. Copy automations_phase3.yaml to /config/automations_phase3.yaml
+#   5. Add the snippet below to configuration.yaml
+#   6. Restart Home Assistant
+#   7. Verify entities in Developer Tools -> States
+#
+# STRUCTURE:
+#   /config/packages/
+#     floor1/
+#       room_101.yaml .. room_105.yaml   (per-room: lights, climate, locks, status)
+#     floor2/
+#       room_201.yaml .. room_203.yaml
+#     floor3/
+#       room_301.yaml .. room_302.yaml
+#     energy.yaml                        (Phase 3: energy monitoring entities)
+#     hotwater.yaml                      (Phase 3: solar heaters + boilers)
+#
+#   /config/automations_phase3.yaml      (Phase 3: 7 hotel automations)
+#
+# Total: 10 room files + 2 system files, ~300 entities
+# ==========================================================
+
+# Load all room + system packages
+homeassistant:
+  packages: !include_dir_named packages
+
+# Load Phase 3 automations separately
+# (keeps them independent from your main automations.yaml)
+automation phase3: !include automations_phase3.yaml

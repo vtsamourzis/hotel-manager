@@ -4,12 +4,15 @@
  * When the HA WebSocket service receives entity updates, it calls
  * broadcastToSSEClients() to push the delta to all connected browser clients.
  *
- * Uses a module-level Map so the registry persists across Next.js API route calls
- * within the same server process.
+ * Uses globalThis so the registry survives Turbopack HMR in dev mode.
+ * Without this, module re-evaluation resets the Map — all registered SSE
+ * clients are lost and deltas never reach the browser.
  */
 
-// Map from clientId → write function
-const _clients = new Map<string, (payload: string) => void>();
+const g = globalThis as unknown as {
+  __sse_clients: Map<string, (payload: string) => void>;
+};
+if (!g.__sse_clients) g.__sse_clients = new Map();
 
 /**
  * Register a new SSE client with its write handle.
@@ -19,7 +22,7 @@ export function registerSSEClient(
   id: string,
   writer: (payload: string) => void
 ): void {
-  _clients.set(id, writer);
+  g.__sse_clients.set(id, writer);
 }
 
 /**
@@ -27,7 +30,7 @@ export function registerSSEClient(
  * Called when the browser disconnects (ReadableStream cancel) or on write error.
  */
 export function unregisterSSEClient(id: string): void {
-  _clients.delete(id);
+  g.__sse_clients.delete(id);
 }
 
 /**
@@ -35,12 +38,12 @@ export function unregisterSSEClient(id: string): void {
  * Write errors are caught per-client — one bad client cannot block others.
  */
 export function broadcastToSSEClients(payload: string): void {
-  for (const [id, write] of _clients.entries()) {
+  for (const [id, write] of g.__sse_clients.entries()) {
     try {
       write(payload);
     } catch {
       // Client stream closed — remove from registry
-      unregisterSSEClient(id);
+      g.__sse_clients.delete(id);
     }
   }
 }
@@ -50,5 +53,5 @@ export function broadcastToSSEClients(payload: string): void {
  * Used for diagnostics/logging only.
  */
 export function getClientCount(): number {
-  return _clients.size;
+  return g.__sse_clients.size;
 }

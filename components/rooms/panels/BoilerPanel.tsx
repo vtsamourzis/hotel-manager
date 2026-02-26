@@ -6,12 +6,10 @@ import styles from "../rooms.module.css";
 
 interface BoilerPanelProps {
   boilerSource: HAEntityState | null;
-  hotWaterTemp: HAEntityState | null;
 }
 
-export function BoilerPanel({ boilerSource, hotWaterTemp }: BoilerPanelProps) {
+export function BoilerPanel({ boilerSource }: BoilerPanelProps) {
   const source = boilerSource?.state ?? null;
-  const temp = hotWaterTemp?.state != null ? Number(hotWaterTemp.state) : null;
 
   const isSolar = source === "Solar";
   const isElectrical = source === "Electrical";
@@ -31,9 +29,6 @@ export function BoilerPanel({ boilerSource, hotWaterTemp }: BoilerPanelProps) {
           : isElectrical
           ? "Ηλεκτρικός θερμοσίφωνας"
           : "Θερμοσίφωνας"}
-      </span>
-      <span className={styles.boilerTemp}>
-        {temp != null ? `${temp}°C` : "—"}
       </span>
     </div>
   );

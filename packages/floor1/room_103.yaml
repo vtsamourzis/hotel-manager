@@ -1,0 +1,252 @@
+# ==========================================================
+# Room 103 — AegeanSea Hotel Package
+# Floor 1 | Entity prefix: room_103_
+#
+# Entity IDs match entity-map.ts exactly.
+# Modern template format (action: not service:)
+# ==========================================================
+
+# --- Status & boiler source ---
+input_select:
+  room_103_status:
+    name: "Room 103 Status"
+    options:
+      - Occupied
+      - Vacant
+      - Cleaning
+      - Preparing
+    initial: Vacant
+    icon: mdi:door
+
+  room_103_boiler_source:
+    name: "Room 103 Boiler Source"
+    options:
+      - Solar
+      - Electrical
+    initial: Solar
+    icon: mdi:water-boiler
+
+# --- Temperatures, humidity, brightness helpers ---
+input_number:
+  room_103_hot_water_temp:
+    name: "Room 103 Hot Water Temperature"
+    min: 20
+    max: 80
+    step: 0.5
+    initial: 52
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer-water
+
+  room_103_humidity:
+    name: "Room 103 Humidity"
+    min: 20
+    max: 95
+    step: 1
+    initial: 52
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+
+  room_103_temperature:
+    name: "Room 103 Temperature"
+    min: 16
+    max: 35
+    step: 0.5
+    initial: 28
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+
+  room_103_ceiling_brightness:
+    name: "Room 103 Ceiling Brightness"
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+
+  room_103_side_1_brightness:
+    name: "Room 103 Side 1 Brightness"
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+
+  room_103_side_2_brightness:
+    name: "Room 103 Side 2 Brightness"
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+
+  room_103_ambient_brightness:
+    name: "Room 103 Ambient Brightness"
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+
+# --- Alerts, light on/off, lock, climate sim helpers ---
+input_boolean:
+  room_103_smoke_alert:
+    name: "Room 103 Smoke Alert"
+    initial: false
+    icon: mdi:smoke-detector-alert
+
+  room_103_leak_alert:
+    name: "Room 103 Leak Alert"
+    initial: false
+    icon: mdi:water-alert
+
+  room_103_ceiling_on:
+    name: "Room 103 Ceiling Light"
+    initial: false
+    icon: mdi:ceiling-light
+
+  room_103_side_1_on:
+    name: "Room 103 Side Light 1"
+    initial: false
+    icon: mdi:lamp
+
+  room_103_side_2_on:
+    name: "Room 103 Side Light 2"
+    initial: false
+    icon: mdi:lamp
+
+  room_103_ambient_on:
+    name: "Room 103 Ambient Light"
+    initial: false
+    icon: mdi:led-strip
+
+  room_103_locked:
+    name: "Room 103 Door Locked"
+    initial: true
+    icon: mdi:lock
+
+  room_103_heater_sim:
+    name: "Room 103 Heater Simulator"
+    initial: false
+    icon: mdi:radiator
+
+  room_103_cooler_sim:
+    name: "Room 103 Cooler Simulator"
+    initial: false
+    icon: mdi:snowflake
+
+  room_103_window_open:
+    name: "Room 103 Window Open"
+    initial: false
+    icon: mdi:window-open-variant
+
+# --- Template lights + Template lock (modern format) ---
+template:
+  - light:
+      - name: "room_103_ceiling"
+        unique_id: "room_103_ceiling_light"
+        state: "{{ states('input_boolean.room_103_ceiling_on') }}"
+        level: >
+          {{ (states('input_number.room_103_ceiling_brightness') | float / 100 * 255) | int }}
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_103_ceiling_on
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_103_ceiling_on
+        set_level:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.room_103_ceiling_brightness
+            data:
+              value: "{{ (brightness / 255 * 100) | int }}"
+
+      - name: "room_103_side_1"
+        unique_id: "room_103_side_1_light"
+        state: "{{ states('input_boolean.room_103_side_1_on') }}"
+        level: >
+          {{ (states('input_number.room_103_side_1_brightness') | float / 100 * 255) | int }}
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_103_side_1_on
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_103_side_1_on
+        set_level:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.room_103_side_1_brightness
+            data:
+              value: "{{ (brightness / 255 * 100) | int }}"
+
+      - name: "room_103_side_2"
+        unique_id: "room_103_side_2_light"
+        state: "{{ states('input_boolean.room_103_side_2_on') }}"
+        level: >
+          {{ (states('input_number.room_103_side_2_brightness') | float / 100 * 255) | int }}
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_103_side_2_on
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_103_side_2_on
+        set_level:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.room_103_side_2_brightness
+            data:
+              value: "{{ (brightness / 255 * 100) | int }}"
+
+      - name: "room_103_ambient"
+        unique_id: "room_103_ambient_light"
+        state: "{{ states('input_boolean.room_103_ambient_on') }}"
+        level: >
+          {{ (states('input_number.room_103_ambient_brightness') | float / 100 * 255) | int }}
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_103_ambient_on
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_103_ambient_on
+        set_level:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.room_103_ambient_brightness
+            data:
+              value: "{{ (brightness / 255 * 100) | int }}"
+
+  - lock:
+      - name: "room_103_door"
+        unique_id: "room_103_door_lock"
+        state: "{{ is_state('input_boolean.room_103_locked', 'on') }}"
+        lock:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.room_103_locked
+        unlock:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.room_103_locked
+
+# --- Climate (HACS dual_mode_generic_thermostat) ---
+climate:
+  - platform: dualmode_generic
+    name: "room_103_ac"
+    unique_id: "room_103_ac_climate"
+    heater: input_boolean.room_103_heater_sim
+    cooler: input_boolean.room_103_cooler_sim
+    target_sensor: input_number.room_103_temperature
+    min_temp: 16
+    max_temp: 30
+    initial_hvac_mode: "off"

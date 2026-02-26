@@ -1,12 +1,11 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Droplets, Thermometer } from "lucide-react";
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Wind, Droplets } from "lucide-react";
 import styles from "./overview.module.css";
 
-// HA weather condition → Greek label map
 const CONDITION_LABELS: Record<string, string> = {
-  "clear-night": "Αίθριος (νύχτα)",
+  "clear-night": "Αίθριος",
   "cloudy": "Συννεφιά",
   "exceptional": "Ακραίες συνθήκες",
   "fog": "Ομίχλη",
@@ -25,19 +24,18 @@ const CONDITION_LABELS: Record<string, string> = {
 
 function conditionIcon(condition: string) {
   if (condition.includes("rain") || condition.includes("pouring")) {
-    return <CloudRain size={40} strokeWidth={1.5} />;
+    return <CloudRain size={42} strokeWidth={1.5} />;
   }
   if (condition.includes("snow") || condition.includes("hail")) {
-    return <CloudSnow size={40} strokeWidth={1.5} />;
+    return <CloudSnow size={42} strokeWidth={1.5} />;
   }
   if (condition.includes("lightning")) {
-    return <CloudLightning size={40} strokeWidth={1.5} />;
+    return <CloudLightning size={42} strokeWidth={1.5} />;
   }
   if (condition.includes("cloud") || condition.includes("fog")) {
-    return <Cloud size={40} strokeWidth={1.5} />;
+    return <Cloud size={42} strokeWidth={1.5} />;
   }
-  // sunny, clear-night, windy, etc.
-  return <Sun size={40} strokeWidth={1.5} />;
+  return <Sun size={42} strokeWidth={1.5} />;
 }
 
 interface WeatherEntity {
@@ -45,8 +43,7 @@ interface WeatherEntity {
   attributes: {
     temperature?: number;
     humidity?: number;
-    apparent_temperature?: number;
-    temperature_unit?: string;
+    wind_speed?: number;
     [key: string]: unknown;
   };
 }
@@ -59,69 +56,41 @@ export function WeatherWidget() {
   const { data, isLoading } = useQuery<WeatherResponse>({
     queryKey: ["weather"],
     queryFn: () => fetch("/api/weather").then((r) => r.json()),
-    staleTime: 5 * 60 * 1000, // 5 min — matches server cache
+    staleTime: 5 * 60 * 1000,
     refetchInterval: 5 * 60 * 1000,
   });
 
   const entity = data?.weather ?? null;
 
+  if (isLoading || !entity) return null;
+
   return (
     <div className={styles.weatherCard}>
-      <div className={styles.cardHeader}>
-        <span className={styles.cardTitle}>Καιρός — Θεσσαλονίκη</span>
+      <div className={styles.weatherIcon}>
+        {conditionIcon(entity.state)}
       </div>
-      <div className={styles.cardBody}>
-        {isLoading && (
-          <div className={styles.weatherUnavailable}>Φόρτωση...</div>
-        )}
-        {!isLoading && !entity && (
-          <div className={styles.weatherUnavailable}>
-            Δεν υπάρχουν διαθέσιμα δεδομένα καιρού
-          </div>
-        )}
-        {!isLoading && entity && (
-          <>
-            <div className={styles.weatherMain}>
-              <div className={styles.weatherIcon}>
-                {conditionIcon(entity.state)}
-              </div>
-              <div>
-                <div className={styles.weatherTemp}>
-                  {entity.attributes.temperature !== undefined
-                    ? `${Math.round(entity.attributes.temperature)}°`
-                    : "—°"}
-                </div>
-                <div className={styles.weatherCondition}>
-                  {CONDITION_LABELS[entity.state] ?? entity.state}
-                </div>
-              </div>
-            </div>
-
-            {(entity.attributes.humidity !== undefined ||
-              entity.attributes.apparent_temperature !== undefined) && (
-              <div className={styles.weatherMeta}>
-                {entity.attributes.humidity !== undefined && (
-                  <div className={styles.weatherMetaItem}>
-                    <Droplets size={13} />
-                    <span>Υγρασία</span>
-                    <span className={styles.weatherMetaValue}>
-                      {Math.round(entity.attributes.humidity)}%
-                    </span>
-                  </div>
-                )}
-                {entity.attributes.apparent_temperature !== undefined && (
-                  <div className={styles.weatherMetaItem}>
-                    <Thermometer size={13} />
-                    <span>Αίσθηση</span>
-                    <span className={styles.weatherMetaValue}>
-                      {Math.round(entity.attributes.apparent_temperature as number)}°
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
+      <div>
+        <div className={styles.weatherTemp}>
+          {entity.attributes.temperature !== undefined
+            ? Math.round(entity.attributes.temperature)
+            : "—"}
+          <span>°C</span>
+        </div>
+        <div className={styles.weatherCond}>
+          {CONDITION_LABELS[entity.state] ?? entity.state}
+        </div>
+        <div className={styles.weatherStats}>
+          {entity.attributes.wind_speed !== undefined && (
+            <span className={styles.weatherStat}>
+              <Wind size={11} /> {Math.round(entity.attributes.wind_speed as number)} km/h
+            </span>
+          )}
+          {entity.attributes.humidity !== undefined && (
+            <span className={styles.weatherStat}>
+              <Droplets size={11} /> {Math.round(entity.attributes.humidity)}%
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

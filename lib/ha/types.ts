@@ -27,8 +27,9 @@ export interface RoomState {
   };
   lock: HAEntityState | null;
   boilerSource: HAEntityState | null;
-  hotWaterTemp: HAEntityState | null;
+  temperature: HAEntityState | null;
   humidity: HAEntityState | null;
   smokeAlert: HAEntityState | null;
   leakAlert: HAEntityState | null;
+  windowOpen: HAEntityState | null;
 }

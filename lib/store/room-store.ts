@@ -49,10 +49,11 @@ function emptyRoom(roomId: string): RoomState {
     lights: { ceiling: null, side1: null, side2: null, ambient: null },
     lock: null,
     boilerSource: null,
-    hotWaterTemp: null,
+    temperature: null,
     humidity: null,
     smokeAlert: null,
     leakAlert: null,
+    windowOpen: null,
   };
 }
 
@@ -112,14 +113,16 @@ function applyEntityToRoom(
       return { ...room, lock: entityState };
     case "boilerSource":
       return { ...room, boilerSource: entityState };
-    case "hotWaterTemp":
-      return { ...room, hotWaterTemp: entityState };
+    case "temperature":
+      return { ...room, temperature: entityState };
     case "humidity":
       return { ...room, humidity: entityState };
     case "smokeAlert":
       return { ...room, smokeAlert: entityState };
     case "leakAlert":
       return { ...room, leakAlert: entityState };
+    case "windowOpen":
+      return { ...room, windowOpen: entityState };
     default:
       return room;
   }

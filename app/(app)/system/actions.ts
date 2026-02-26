@@ -2,5 +2,5 @@
 import { signOut } from "@/lib/auth"
 
 export async function logoutAction() {
-  await signOut({ redirectTo: "/login" })
+  await signOut({ redirect: false }) // Clears session cookie, navigation handled client-side
 }

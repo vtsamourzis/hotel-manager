@@ -1,0 +1,286 @@
+# ==========================================================
+# AegeanSea Hotel — Energy Monitoring Package
+# Phase 3 | Global + per-room energy simulation entities
+#
+# Loaded automatically via: homeassistant: packages: !include_dir_named packages
+# ==========================================================
+
+# --- Global energy simulators ---
+input_number:
+  hotel_total_power_sim:
+    name: "Hotel Total Power Simulator"
+    min: 0
+    max: 50
+    step: 0.1
+    initial: 4.2
+    unit_of_measurement: "kW"
+    mode: slider
+
+  hotel_today_energy_sim:
+    name: "Hotel Today Energy Simulator"
+    min: 0
+    max: 500
+    step: 0.1
+    initial: 38.0
+    unit_of_measurement: "kWh"
+    mode: slider
+
+  hotel_ac_power_sim:
+    name: "Hotel AC Power Simulator"
+    min: 0
+    max: 30
+    step: 0.1
+    initial: 2.1
+    unit_of_measurement: "kW"
+    mode: slider
+
+  hotel_lighting_power_sim:
+    name: "Hotel Lighting Power Simulator"
+    min: 0
+    max: 10
+    step: 0.1
+    initial: 0.8
+    unit_of_measurement: "kW"
+    mode: slider
+
+  hotel_boiler_power_sim:
+    name: "Hotel Boiler Power Simulator"
+    min: 0
+    max: 20
+    step: 0.1
+    initial: 0.9
+    unit_of_measurement: "kW"
+    mode: slider
+
+  hotel_other_power_sim:
+    name: "Hotel Other Power Simulator"
+    min: 0
+    max: 10
+    step: 0.1
+    initial: 0.4
+    unit_of_measurement: "kW"
+    mode: slider
+
+  hotel_energy_savings_sim:
+    name: "Hotel Energy Savings Simulator"
+    min: 0
+    max: 100
+    step: 0.1
+    initial: 5.2
+    unit_of_measurement: "kWh"
+    mode: slider
+
+  # Per-room power simulators
+  room_101_power_sim:
+    name: "Room 101 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.52
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_102_power_sim:
+    name: "Room 102 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.38
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_103_power_sim:
+    name: "Room 103 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.61
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_104_power_sim:
+    name: "Room 104 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.30
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_105_power_sim:
+    name: "Room 105 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.45
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_201_power_sim:
+    name: "Room 201 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.55
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_202_power_sim:
+    name: "Room 202 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.33
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_203_power_sim:
+    name: "Room 203 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.42
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_301_power_sim:
+    name: "Room 301 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.48
+    unit_of_measurement: "kW"
+    mode: slider
+
+  room_302_power_sim:
+    name: "Room 302 Power Simulator"
+    min: 0
+    max: 5
+    step: 0.01
+    initial: 0.36
+    unit_of_measurement: "kW"
+    mode: slider
+
+# --- Template sensors ---
+template:
+  - sensor:
+      # Global energy sensors
+      - name: "Hotel Total Power"
+        unique_id: hotel_total_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.hotel_total_power_sim') }}"
+
+      - name: "Hotel Today Energy"
+        unique_id: hotel_today_energy
+        device_class: energy
+        state_class: measurement
+        unit_of_measurement: "kWh"
+        state: "{{ states('input_number.hotel_today_energy_sim') }}"
+
+      - name: "Hotel AC Power"
+        unique_id: hotel_ac_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.hotel_ac_power_sim') }}"
+
+      - name: "Hotel Lighting Power"
+        unique_id: hotel_lighting_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.hotel_lighting_power_sim') }}"
+
+      - name: "Hotel Boiler Power"
+        unique_id: hotel_boiler_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.hotel_boiler_power_sim') }}"
+
+      - name: "Hotel Other Power"
+        unique_id: hotel_other_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.hotel_other_power_sim') }}"
+
+      - name: "Hotel Energy Savings"
+        unique_id: hotel_energy_savings
+        device_class: energy
+        state_class: measurement
+        unit_of_measurement: "kWh"
+        state: "{{ states('input_number.hotel_energy_savings_sim') }}"
+
+      # Per-room power sensors
+      - name: "Room 101 Power"
+        unique_id: room_101_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_101_power_sim') }}"
+
+      - name: "Room 102 Power"
+        unique_id: room_102_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_102_power_sim') }}"
+
+      - name: "Room 103 Power"
+        unique_id: room_103_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_103_power_sim') }}"
+
+      - name: "Room 104 Power"
+        unique_id: room_104_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_104_power_sim') }}"
+
+      - name: "Room 105 Power"
+        unique_id: room_105_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_105_power_sim') }}"
+
+      - name: "Room 201 Power"
+        unique_id: room_201_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_201_power_sim') }}"
+
+      - name: "Room 202 Power"
+        unique_id: room_202_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_202_power_sim') }}"
+
+      - name: "Room 203 Power"
+        unique_id: room_203_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_203_power_sim') }}"
+
+      - name: "Room 301 Power"
+        unique_id: room_301_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_301_power_sim') }}"
+
+      - name: "Room 302 Power"
+        unique_id: room_302_power
+        device_class: power
+        state_class: measurement
+        unit_of_measurement: "kW"
+        state: "{{ states('input_number.room_302_power_sim') }}"
