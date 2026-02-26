@@ -61,9 +61,13 @@ cd hotel-manager
 ```bash
 cd /opt/hotel-manager
 
-# Install dependencies (builds native modules like better-sqlite3)
+# Install dependencies
 # dotenv is included in dependencies — it's used by PM2 to load .env
 pnpm install
+
+# IMPORTANT: Rebuild native modules for this platform (Linux x64)
+# pnpm v10+ blocks build scripts by default; better-sqlite3 needs explicit rebuild
+pnpm rebuild better-sqlite3
 
 # Create .env
 cp .env.example .env
@@ -207,7 +211,8 @@ Now `https://hotel.yourdomain.com` reaches your app.
 ```bash
 cd /opt/hotel-manager
 git pull
-pnpm install          # only needed if dependencies changed
+pnpm install                    # only needed if dependencies changed
+pnpm rebuild better-sqlite3     # always rebuild native module after install
 pnpm build
 pm2 restart hotel-manager
 
@@ -285,6 +290,20 @@ fuser /opt/hotel-manager/data/hotel.db
 # Restart the app
 pm2 restart hotel-manager
 ```
+
+### "Could not locate the bindings file" (better-sqlite3)
+
+```bash
+# Check if native binary exists
+find node_modules -name "better_sqlite3.node"
+
+# If nothing returned, rebuild:
+pnpm rebuild better-sqlite3
+pnpm build
+pm2 restart hotel-manager
+```
+
+**Why this happens:** pnpm v10+ blocks native build scripts by default. The `pnpm.onlyBuiltDependencies` allowlist in `package.json` includes `better-sqlite3`, but `pnpm install` may still skip the build. Always run `pnpm rebuild better-sqlite3` after install.
 
 ### Run diagnostics
 
@@ -400,5 +419,5 @@ pm2 logs hotel-manager
 curl http://localhost:3000/api/health
 
 # Update code + rebuild
-git pull && pnpm install && pnpm build && pm2 restart hotel-manager
+git pull && pnpm install && pnpm rebuild better-sqlite3 && pnpm build && pm2 restart hotel-manager
 ```
