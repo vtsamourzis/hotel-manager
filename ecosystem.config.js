@@ -2,7 +2,8 @@ module.exports = {
   apps: [
     {
       name: "hotel-manager",
-      script: ".next/standalone/server.js",
+      script: "node_modules/next/dist/bin/next",
+      args: "start",
       cwd: "/opt/hotel-manager",
       instances: 1,
       exec_mode: "fork",
