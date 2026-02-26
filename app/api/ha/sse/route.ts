@@ -60,9 +60,24 @@ export async function GET() {
           unregisterSSEClient(clientId);
         }
       });
+
+      // Keepalive ping every 30s — prevents Cloudflare Tunnel (and other
+      // reverse proxies) from killing the connection due to idle timeout.
+      // SSE comment lines (starting with `:`) are ignored by EventSource.
+      const keepalive = setInterval(() => {
+        try {
+          controller.enqueue(encoder.encode(": keepalive\n\n"));
+        } catch {
+          clearInterval(keepalive);
+        }
+      }, 30_000);
+
+      // Store interval ID for cleanup
+      (controller as unknown as Record<string, unknown>).__keepalive = keepalive;
     },
     cancel() {
-      // Browser disconnected — clean up registry slot
+      // Browser disconnected — clean up registry slot and keepalive
+      clearInterval((controller as unknown as Record<string, unknown>).__keepalive as ReturnType<typeof setInterval>);
       unregisterSSEClient(clientId);
     },
   });
