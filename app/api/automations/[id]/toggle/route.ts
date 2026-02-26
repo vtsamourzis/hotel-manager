@@ -3,10 +3,6 @@ import { auth } from "@/lib/auth";
 import { haCallService } from "@/lib/ha/connection";
 import { AUTOMATION_ENTITIES } from "@/lib/ha/entity-map";
 
-const ID_TO_ENTITY: Record<string, string> = Object.fromEntries(
-  AUTOMATION_ENTITIES.map((a) => [a.id, a.entityId])
-);
-
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -16,7 +12,7 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const entityId = ID_TO_ENTITY[id];
+  const entityId = AUTOMATION_ENTITIES.find((a) => a.id === id)?.entityId;
 
   if (!entityId) {
     return NextResponse.json(
