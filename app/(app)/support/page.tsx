@@ -58,10 +58,13 @@ export default function SupportPage() {
 
   const queryClient = useQueryClient();
 
-  // History query
+  // History query — exclude automation tickets (those live in the automation panel)
   const { data: ticketsData } = useQuery<{ tickets: SupportTicket[] }>({
     queryKey: ["support-tickets"],
     queryFn: () => fetch("/api/support").then((r) => r.json()),
+    select: (data) => ({
+      tickets: data.tickets.filter((t) => t.type !== "automation"),
+    }),
   });
 
   const tickets = ticketsData?.tickets ?? [];
