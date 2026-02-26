@@ -40,6 +40,7 @@ export async function GET() {
   }
 
   const encoder = new TextEncoder();
+  let keepaliveTimer: ReturnType<typeof setInterval> | undefined;
 
   const stream = new ReadableStream({
     start(controller) {
@@ -64,20 +65,17 @@ export async function GET() {
       // Keepalive ping every 30s — prevents Cloudflare Tunnel (and other
       // reverse proxies) from killing the connection due to idle timeout.
       // SSE comment lines (starting with `:`) are ignored by EventSource.
-      const keepalive = setInterval(() => {
+      keepaliveTimer = setInterval(() => {
         try {
           controller.enqueue(encoder.encode(": keepalive\n\n"));
         } catch {
-          clearInterval(keepalive);
+          clearInterval(keepaliveTimer);
         }
       }, 30_000);
-
-      // Store interval ID for cleanup
-      (controller as unknown as Record<string, unknown>).__keepalive = keepalive;
     },
     cancel() {
       // Browser disconnected — clean up registry slot and keepalive
-      clearInterval((controller as unknown as Record<string, unknown>).__keepalive as ReturnType<typeof setInterval>);
+      clearInterval(keepaliveTimer);
       unregisterSSEClient(clientId);
     },
   });
