@@ -2,11 +2,11 @@ const REQUIRED_VARS = [
   "HA_URL",
   "HA_TOKEN",
   "AUTH_SECRET",
-  "DB_PATH",
 ] as const;
 
 const OPTIONAL_VARS = [
   "AUTH_TRUST_HOST",
+  "DB_PATH",
   "PROPERTY_NAME",
   "NEXT_PUBLIC_PROPERTY_NAME",
   "PORT",
