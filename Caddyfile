@@ -1,0 +1,27 @@
+# AegeanSea Hotel Manager — Caddy reverse proxy
+# Provides HTTPS on LAN via internal (self-signed) certificate.
+#
+# To suppress browser certificate warnings, export the Caddy root CA:
+#   docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt ./caddy-root.crt
+# Then install caddy-root.crt on client devices.
+
+{
+  auto_https disable_redirects
+}
+
+https://10.10.90.11 {
+  tls internal
+  reverse_proxy app:3000
+  encode gzip
+
+  # Security headers (supplement — CSP set in Next.js config)
+  header {
+    X-Robots-Tag "noindex, nofollow"
+    -Server
+  }
+}
+
+# HTTP -> HTTPS redirect for convenience
+http://10.10.90.11 {
+  redir https://10.10.90.11{uri} permanent
+}

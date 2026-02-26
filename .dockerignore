@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env.*.local
+data/
+*.md
+!README.md
+!DEPLOY.md
+.planning/
+.claude/
+HA-ENTITIES.yaml
+HA-ENTITIES-PHASE3.yaml
+tests/
+playwright-report/
+playwright/.auth/
