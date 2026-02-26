@@ -11,6 +11,8 @@
  */
 import { useCallback } from "react";
 import { useHotWaterStore } from "@/lib/store/hotwater-store";
+import { useUIStore } from "@/lib/store/ui-store";
+import { guardOffline } from "@/lib/hooks/useServerOnline";
 import { FLOOR_ROOMS, type RoomId } from "@/lib/ha/entity-map";
 import styles from "./hotwater.module.css";
 
@@ -30,14 +32,16 @@ function runtimeColor(runtime: number): string {
 
 export default function BoilerRuntimeList() {
   const roomBoilers = useHotWaterStore((s) => s.roomBoilers);
+  const serverOnline = useUIStore((s) => s.serverOnline);
 
   const handleToggle = useCallback((roomId: string, currentOn: boolean) => {
+    if (guardOffline(serverOnline)) return;
     fetch(`/api/hotwater/boiler/${roomId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "toggle", value: !currentOn }),
     });
-  }, []);
+  }, [serverOnline]);
 
   // Build a lookup for quick access
   const boilerMap = new Map(roomBoilers.map((b) => [b.roomId, b]));
@@ -70,6 +74,7 @@ export default function BoilerRuntimeList() {
                     }`}
                     onClick={() => handleToggle(roomId, boiler.on)}
                     aria-label={`Θερμοσίφωνας ${roomId}`}
+                    style={{ opacity: serverOnline ? 1 : 0.5, cursor: serverOnline ? "pointer" : "not-allowed" }}
                   >
                     <span className={styles.toggleKnob} />
                   </button>

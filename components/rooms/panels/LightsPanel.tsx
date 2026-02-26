@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRoomStore } from "@/lib/store/room-store";
+import { useUIStore } from "@/lib/store/ui-store";
+import { guardOffline } from "@/lib/hooks/useServerOnline";
 import type { HAEntityState } from "@/lib/ha/types";
 import type { RoomState } from "@/lib/ha/types";
 import styles from "../rooms.module.css";
@@ -39,6 +42,9 @@ function LightZone({
   zone: { key: ZoneKey; label: string; apiPath: string };
   entity: HAEntityState | null;
 }) {
+  const optimisticUpdate = useRoomStore((s) => s.optimisticUpdate);
+  const currentLights = useRoomStore((s) => s.rooms[roomId]?.lights);
+  const serverOnline = useUIStore((s) => s.serverOnline);
   const isOn = entity?.state === "on";
   const [brightness, setBrightness] = useState(getBrightnessPct(entity));
 
@@ -47,6 +53,16 @@ function LightZone({
   }, [entity]);
 
   const callLight = (payload: { on: boolean; brightness?: number }) => {
+    // Optimistic: update store instantly
+    if (currentLights && entity) {
+      const newState = payload.on ? "on" : "off";
+      optimisticUpdate(roomId, {
+        lights: {
+          ...currentLights,
+          [zone.key]: { ...entity, state: newState },
+        },
+      });
+    }
     fetch(`/api/rooms/${roomId}/lights/${zone.apiPath}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -61,15 +77,17 @@ function LightZone({
   };
 
   const handleToggle = () => {
+    if (guardOffline(serverOnline)) return;
     callLight({ on: !isOn });
   };
 
   const handleBrightnessCommit = () => {
+    if (guardOffline(serverOnline)) return;
     callLight({ on: true, brightness: brightness });
   };
 
   return (
-    <div className={styles.lightZone}>
+    <div className={styles.lightZone} style={{ opacity: serverOnline ? 1 : 0.5, cursor: serverOnline ? "default" : "not-allowed" }}>
       <label className={styles.toggle} aria-label={`${zone.label} ${isOn ? "ανοιχτό" : "κλειστό"}`}>
         <input
           type="checkbox"

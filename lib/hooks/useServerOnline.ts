@@ -1,6 +1,26 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
+/**
+ * Guard a write action when the server is offline.
+ * Shows a Greek toast and returns true (blocked) if offline.
+ */
+export function guardOffline(serverOnline: boolean): boolean {
+  if (!serverOnline) {
+    window.dispatchEvent(
+      new CustomEvent("toast", {
+        detail: {
+          message:
+            "Δεν υπάρχει σύνδεση — η ενέργεια δεν μπορεί να εκτελεστεί",
+          type: "error",
+        },
+      })
+    );
+    return true; // blocked
+  }
+  return false; // allowed
+}
+
 export function useServerOnline() {
   const [serverOnline, setServerOnline] = useState(true);
 

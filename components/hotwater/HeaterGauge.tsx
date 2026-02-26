@@ -13,6 +13,8 @@
  * zone highlight arc between min/max, tip dot at current temperature.
  */
 import { useState, useCallback } from "react";
+import { useUIStore } from "@/lib/store/ui-store";
+import { guardOffline } from "@/lib/hooks/useServerOnline";
 import styles from "./hotwater.module.css";
 
 interface CentralHeater {
@@ -83,6 +85,8 @@ export default function HeaterGauge({
   onSetSimTemp,
   compact = false,
 }: HeaterGaugeProps) {
+  const serverOnline = useUIStore((s) => s.serverOnline);
+
   // Local slider state -- API only fires on mouseUp/touchEnd
   const [localMin, setLocalMin] = useState(heater.minThreshold);
   const [localMax, setLocalMax] = useState(heater.maxThreshold);
@@ -128,16 +132,19 @@ export default function HeaterGauge({
   const elementActive = heater.elementOn;
 
   const handleMinRelease = useCallback(() => {
+    if (guardOffline(serverOnline)) return;
     onSetMin(localMin);
-  }, [localMin, onSetMin]);
+  }, [localMin, onSetMin, serverOnline]);
 
   const handleMaxRelease = useCallback(() => {
+    if (guardOffline(serverOnline)) return;
     onSetMax(localMax);
-  }, [localMax, onSetMax]);
+  }, [localMax, onSetMax, serverOnline]);
 
   const handleSimRelease = useCallback(() => {
+    if (guardOffline(serverOnline)) return;
     onSetSimTemp(localSimTemp);
-  }, [localSimTemp, onSetSimTemp]);
+  }, [localSimTemp, onSetSimTemp, serverOnline]);
 
   return (
     <div className={styles.gaugeCard}>
@@ -234,15 +241,19 @@ export default function HeaterGauge({
             className={`${styles.toggleSwitch} ${
               elementActive ? styles.toggleSwitchOn : ""
             }`}
-            onClick={() => onElementToggle(!heater.elementOn)}
+            onClick={() => {
+              if (guardOffline(serverOnline)) return;
+              onElementToggle(!heater.elementOn);
+            }}
             aria-label={`Αντίσταση Ηλιακός ${index + 1}`}
+            style={{ opacity: serverOnline ? 1 : 0.5, cursor: serverOnline ? "pointer" : "not-allowed" }}
           >
             <span className={styles.toggleKnob} />
           </button>
         </div>
 
         {/* Simulation: current temperature slider -- writes to HA on release */}
-        <div className={styles.simSection}>
+        <div className={styles.simSection} style={{ opacity: serverOnline ? 1 : 0.5, cursor: serverOnline ? "default" : "not-allowed" }}>
           <div className={styles.simHeader}>Προσομοίωση Αισθητήρα</div>
           <div className={styles.sliderGroup}>
             <span className={styles.sliderLabel}>Θερμοκρ.</span>

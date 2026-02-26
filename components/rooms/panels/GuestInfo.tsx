@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoomStore } from "@/lib/store/room-store";
+import { useUIStore } from "@/lib/store/ui-store";
+import { guardOffline } from "@/lib/hooks/useServerOnline";
 import type { Booking } from "@/lib/db/bookings";
 import styles from "../rooms.module.css";
 
@@ -35,6 +37,7 @@ export function GuestInfo({ roomId, currentStatus }: GuestInfoProps) {
 
   const allRooms = useRoomStore((s) => s.rooms);
   const optimisticUpdate = useRoomStore((s) => s.optimisticUpdate);
+  const serverOnline = useUIStore((s) => s.serverOnline);
 
   const { data, isLoading } = useQuery<{ booking: Booking | null }>({
     queryKey: ["booking", roomId],
@@ -69,6 +72,7 @@ export function GuestInfo({ roomId, currentStatus }: GuestInfoProps) {
     .sort();
 
   const handleCheckout = () => {
+    if (guardOffline(serverOnline)) return;
     const rollback = optimisticUpdate(roomId, { status: "Vacant" });
     fetch(`/api/rooms/${roomId}/checkout`, { method: "POST" }).catch(() => {
       rollback();
@@ -81,6 +85,7 @@ export function GuestInfo({ roomId, currentStatus }: GuestInfoProps) {
   };
 
   const handleMove = async () => {
+    if (guardOffline(serverOnline)) return;
     if (!targetRoom) return;
     setIsMoving(true);
 
@@ -133,7 +138,7 @@ export function GuestInfo({ roomId, currentStatus }: GuestInfoProps) {
         </span>
       </div>
 
-      <div className={styles.guestActions}>
+      <div className={styles.guestActions} style={{ opacity: serverOnline ? 1 : 0.5, cursor: serverOnline ? "default" : "not-allowed" }}>
         <button className="btn-secondary" style={{ fontSize: "12px", padding: "6px 12px" }} onClick={handleCheckout}>
           Αποχώρηση
         </button>

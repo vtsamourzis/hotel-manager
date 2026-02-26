@@ -17,6 +17,8 @@ export interface UIStore {
   activeFloor: "all" | "1" | "2" | "3";
   /** Active status filter in Rooms view */
   activeFilter: "all" | "occupied" | "vacant" | "cleaning" | "preparing";
+  /** Whether the Next.js server is reachable (from /api/health pings) */
+  serverOnline: boolean;
 
   /** Select a room and open the detail panel */
   selectRoom(roomId: string | null): void;
@@ -32,6 +34,8 @@ export interface UIStore {
   setFloor(floor: UIStore["activeFloor"]): void;
   /** Set the active status filter */
   setFilter(filter: UIStore["activeFilter"]): void;
+  /** Update server online status */
+  setServerOnline(online: boolean): void;
 }
 
 export const useUIStore = create<UIStore>((set) => ({
@@ -40,6 +44,7 @@ export const useUIStore = create<UIStore>((set) => ({
   isCheckinModalOpen: false,
   activeFloor: "all",
   activeFilter: "all",
+  serverOnline: true,
 
   selectRoom(roomId) {
     // Setting a room opens the panel; passing null closes it
@@ -72,5 +77,9 @@ export const useUIStore = create<UIStore>((set) => ({
 
   setFilter(filter) {
     set({ activeFilter: filter });
+  },
+
+  setServerOnline(online) {
+    set({ serverOnline: online });
   },
 }));

@@ -11,13 +11,40 @@
  * - "delta": Single entity update -> dispatches to relevant store(s)
  * - "connection": Connection status change from server -> calls setConnection()
  */
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRoomStore } from "@/lib/store/room-store";
 import { useEnergyStore } from "@/lib/store/energy-store";
 import { useHotWaterStore } from "@/lib/store/hotwater-store";
 import { useAutomationsStore } from "@/lib/store/automations-store";
+import { useUIStore } from "@/lib/store/ui-store";
+import { useServerOnline } from "@/lib/hooks/useServerOnline";
 import { ENTITY_TO_ROOM } from "@/lib/ha/entity-map";
 import type { HAEntityState } from "@/lib/ha/types";
+
+/**
+ * Syncs useServerOnline() hook result into the UI Zustand store.
+ * Fires a reconnection toast when transitioning from offline -> online.
+ */
+function ServerOnlineSync() {
+  const serverOnline = useServerOnline();
+  const prevRef = useRef(true);
+
+  useEffect(() => {
+    useUIStore.getState().setServerOnline(serverOnline);
+
+    // Reconnection toast (not on initial mount)
+    if (serverOnline && !prevRef.current) {
+      window.dispatchEvent(
+        new CustomEvent("toast", {
+          detail: { message: "Επανασύνδεση", type: "success" },
+        })
+      );
+    }
+    prevRef.current = serverOnline;
+  }, [serverOnline]);
+
+  return null;
+}
 
 interface HAProviderProps {
   children: React.ReactNode;
@@ -108,5 +135,10 @@ export function HAProvider({ children }: HAProviderProps) {
     };
   }, []); // Run once on mount
 
-  return <>{children}</>;
+  return (
+    <>
+      <ServerOnlineSync />
+      {children}
+    </>
+  );
 }

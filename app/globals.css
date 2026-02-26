@@ -167,17 +167,19 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ═══════════════════════════
-   RESPONSIVE NAV VISIBILITY
-═══════════════════════════ */
-.desktop-nav { display: contents; }
-.mobile-nav  { display: none; }
+/* Offline: visual dimming for write controls */
+.offline-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-@media (max-width: 768px) {
-  .desktop-nav { display: none; }
-  .mobile-nav  { display: contents; }
+/* ═══════════════════════════
+   PAGE SCROLL
+═══════════════════════════ */
+.page-scroll {
+  padding-bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom, 0px));
 }
 
 @media (min-width: 769px) {
-  .page-scroll { padding-bottom: 48px !important; }
+  .page-scroll { padding-bottom: 48px; }
 }

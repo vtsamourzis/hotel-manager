@@ -1,6 +1,9 @@
 "use client";
 
 import { Lock, LockOpen } from "lucide-react";
+import { useRoomStore } from "@/lib/store/room-store";
+import { useUIStore } from "@/lib/store/ui-store";
+import { guardOffline } from "@/lib/hooks/useServerOnline";
 import type { HAEntityState } from "@/lib/ha/types";
 import styles from "../rooms.module.css";
 
@@ -14,9 +17,16 @@ export function LockControl({ roomId, lockState }: LockControlProps) {
     return <p className={styles.unavailable}>Δεν υπάρχει κλειδαριά</p>;
   }
 
+  const optimisticUpdate = useRoomStore((s) => s.optimisticUpdate);
+  const serverOnline = useUIStore((s) => s.serverOnline);
   const isLocked = lockState.state === "locked";
 
   const callLock = (action: "lock" | "unlock") => {
+    if (guardOffline(serverOnline)) return;
+    // Optimistic: update store instantly
+    optimisticUpdate(roomId, {
+      lock: { ...lockState, state: action === "lock" ? "locked" : "unlocked" },
+    });
     fetch(`/api/lock/${roomId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -40,7 +50,7 @@ export function LockControl({ roomId, lockState }: LockControlProps) {
       <span className={styles.lockStateLabel}>
         {isLocked ? "Κλειδωμένο" : "Ξεκλείδωτο"}
       </span>
-      <div className={styles.lockButtons}>
+      <div className={styles.lockButtons} style={{ opacity: serverOnline ? 1 : 0.5, cursor: serverOnline ? "default" : "not-allowed" }}>
         <button
           className="btn-secondary"
           style={{ fontSize: "12px", padding: "5px 12px" }}

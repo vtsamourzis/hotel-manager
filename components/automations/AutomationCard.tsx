@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback } from "react";
-import { Wind, Eye, Sparkles, Leaf, Sun, Moon } from "lucide-react";
+import { Wind, Eye, Sparkles, Leaf, Sun, Moon, Timer } from "lucide-react";
 import { useAutomationsStore } from "@/lib/store/automations-store";
+import { useUIStore } from "@/lib/store/ui-store";
+import { guardOffline } from "@/lib/hooks/useServerOnline";
 import styles from "./automations.module.css";
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
@@ -12,6 +14,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
   leaf: Leaf,
   sun: Sun,
   moon: Moon,
+  timer: Timer,
 };
 
 interface AutomationCardProps {
@@ -44,8 +47,10 @@ export function AutomationCard({ automation }: AutomationCardProps) {
     automation;
 
   const IconComponent = ICON_MAP[icon] ?? Wind;
+  const serverOnline = useUIStore((s) => s.serverOnline);
 
   const handleToggle = useCallback(async () => {
+    if (guardOffline(serverOnline)) return;
     const newEnabled = !enabled;
     const rollback = useAutomationsStore
       .getState()
@@ -80,7 +85,7 @@ export function AutomationCard({ automation }: AutomationCardProps) {
         })
       );
     }
-  }, [id, entityId, enabled]);
+  }, [id, entityId, enabled, serverOnline]);
 
   return (
     <div
@@ -111,6 +116,7 @@ export function AutomationCard({ automation }: AutomationCardProps) {
               className={styles.toggleBtn}
               onClick={handleToggle}
               aria-label={`${enabled ? "Απενεργοποίηση" : "Ενεργοποίηση"} ${label}`}
+              style={{ opacity: serverOnline ? 1 : 0.5, cursor: serverOnline ? "pointer" : "not-allowed" }}
             >
               <span
                 className={`${styles.toggleTrack} ${enabled ? styles.toggleOn : styles.toggleOff}`}

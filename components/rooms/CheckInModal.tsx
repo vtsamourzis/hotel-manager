@@ -1,49 +1,73 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUIStore } from "@/lib/store/ui-store";
 import { useRoomStore } from "@/lib/store/room-store";
+import { guardOffline } from "@/lib/hooks/useServerOnline";
 import { ROOMS } from "@/lib/ha/entity-map";
 import styles from "./rooms.module.css";
 
 const BOOKING_SOURCES = ["Airbnb", "Booking.com", "Direct", "Walk-in"] as const;
 
-function nowLocalDateTimeString() {
-  const now = new Date();
-  // Format: YYYY-MM-DDTHH:mm (required for datetime-local input)
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+// Generate 24h time slots at 30-min intervals: "00:00", "00:30", "01:00", ..., "23:30"
+const TIME_SLOTS: string[] = [];
+for (let h = 0; h < 24; h++) {
+  TIME_SLOTS.push(`${String(h).padStart(2, "0")}:00`);
+  TIME_SLOTS.push(`${String(h).padStart(2, "0")}:30`);
 }
 
-function tomorrowLocalDateTimeString() {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(12, 0, 0, 0);
+/** Format a Date as DD-MM-YYYY for display */
+function formatDMY(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}T${pad(tomorrow.getHours())}:${pad(tomorrow.getMinutes())}`;
+  return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
+}
+
+/** Parse DD-MM-YYYY back to YYYY-MM-DD for API/Date constructor */
+function dmyToISO(dmy: string): string {
+  const [dd, mm, yyyy] = dmy.split("-");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function todayDMY() {
+  return formatDMY(new Date());
+}
+
+function tomorrowDMY() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return formatDMY(d);
+}
+
+/** Round current time to nearest 30-min slot */
+function nearestTimeSlot(): string {
+  const now = new Date();
+  const minutes = now.getMinutes() >= 30 ? 30 : 0;
+  return `${String(now.getHours()).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
 
 export function CheckInModal() {
-  const { isCheckinModalOpen, closeCheckinModal, selectedRoomId } = useUIStore();
+  const { isCheckinModalOpen, closeCheckinModal, selectedRoomId, serverOnline } = useUIStore();
   const rooms = useRoomStore((s) => s.rooms);
 
-  // Available rooms: Vacant or Preparing
   const availableRooms = ROOMS.filter(
     (id) => rooms[id]?.status === "Vacant" || rooms[id]?.status === "Preparing"
   );
 
-  // Pre-select the currently selected room if it's available
   const defaultRoom =
     selectedRoomId && availableRooms.includes(selectedRoomId as (typeof ROOMS)[number])
       ? selectedRoomId
       : availableRooms[0] ?? "";
 
   const [guestName, setGuestName]         = useState("");
-  const [checkIn, setCheckIn]             = useState(nowLocalDateTimeString);
-  const [checkOut, setCheckOut]           = useState(tomorrowLocalDateTimeString);
+  const [checkInDate, setCheckInDate]     = useState(todayDMY);
+  const [checkInTime, setCheckInTime]     = useState(nearestTimeSlot);
+  const [checkOutDate, setCheckOutDate]   = useState(tomorrowDMY);
+  const [checkOutTime, setCheckOutTime]   = useState("12:00");
   const [roomId, setRoomId]               = useState(defaultRoom);
   const [bookingSource, setBookingSource] = useState<string>("Direct");
   const [isSubmitting, setIsSubmitting]   = useState(false);
+  const queryClient = useQueryClient();
 
   if (!isCheckinModalOpen) return null;
 
@@ -55,24 +79,25 @@ export function CheckInModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!roomId || !guestName || !checkIn || !checkOut) return;
+    if (guardOffline(serverOnline)) return;
+    if (!roomId || !guestName || !checkInDate || !checkOutDate) return;
 
-    // Close modal immediately — optimistic UX
     closeCheckinModal();
 
     try {
+      const checkIn = new Date(`${dmyToISO(checkInDate)}T${checkInTime}`).toISOString();
+      const checkOut = new Date(`${dmyToISO(checkOutDate)}T${checkOutTime}`).toISOString();
+
       const res = await fetch(`/api/rooms/${roomId}/checkin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          guestName,
-          checkIn: new Date(checkIn).toISOString(),
-          checkOut: new Date(checkOut).toISOString(),
-          bookingSource,
-        }),
+        body: JSON.stringify({ guestName, checkIn, checkOut, bookingSource }),
       });
 
       if (!res.ok) throw new Error("checkin failed");
+
+      // Refresh the schedule timeline on the overview page
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
     } catch {
       window.dispatchEvent(
         new CustomEvent("toast", {
@@ -95,7 +120,6 @@ export function CheckInModal() {
       aria-label="Νέα Άφιξη"
     >
       <div className={styles.modal}>
-        {/* Modal header */}
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>Νέα Άφιξη</h2>
           <button
@@ -125,37 +149,59 @@ export function CheckInModal() {
             />
           </div>
 
-          {/* Check-in date/time */}
+          {/* Check-in date + time */}
           <div className={styles.formGroup}>
-            <label className={styles.formLabel} htmlFor="check-in">
-              Ημ/νία & Ώρα Άφιξης
-            </label>
-            <input
-              id="check-in"
-              type="datetime-local"
-              className={styles.formInput}
-              value={checkIn}
-              onChange={(e) => setCheckIn(e.target.value)}
-              required
-            />
+            <label className={styles.formLabel}>Ημ/νία & Ώρα Άφιξης</label>
+            <div className={styles.dateTimeRow}>
+              <input
+                type="text"
+                inputMode="numeric"
+                className={styles.formInput}
+                value={checkInDate}
+                onChange={(e) => setCheckInDate(e.target.value)}
+                placeholder="ΗΗ-ΜΜ-ΕΕΕΕ"
+                pattern="\d{2}-\d{2}-\d{4}"
+                required
+              />
+              <select
+                className={styles.formSelect}
+                value={checkInTime}
+                onChange={(e) => setCheckInTime(e.target.value)}
+              >
+                {TIME_SLOTS.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* Check-out date/time */}
+          {/* Check-out date + time */}
           <div className={styles.formGroup}>
-            <label className={styles.formLabel} htmlFor="check-out">
-              Ημ/νία & Ώρα Αναχώρησης
-            </label>
-            <input
-              id="check-out"
-              type="datetime-local"
-              className={styles.formInput}
-              value={checkOut}
-              onChange={(e) => setCheckOut(e.target.value)}
-              required
-            />
+            <label className={styles.formLabel}>Ημ/νία & Ώρα Αναχώρησης</label>
+            <div className={styles.dateTimeRow}>
+              <input
+                type="text"
+                inputMode="numeric"
+                className={styles.formInput}
+                value={checkOutDate}
+                onChange={(e) => setCheckOutDate(e.target.value)}
+                placeholder="ΗΗ-ΜΜ-ΕΕΕΕ"
+                pattern="\d{2}-\d{2}-\d{4}"
+                required
+              />
+              <select
+                className={styles.formSelect}
+                value={checkOutTime}
+                onChange={(e) => setCheckOutTime(e.target.value)}
+              >
+                {TIME_SLOTS.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* Room selector (available rooms only) */}
+          {/* Room selector */}
           <div className={styles.formGroup}>
             <label className={styles.formLabel} htmlFor="room-select">
               Δωμάτιο
@@ -193,26 +239,21 @@ export function CheckInModal() {
               onChange={(e) => setBookingSource(e.target.value)}
             >
               {BOOKING_SOURCES.map((src) => (
-                <option key={src} value={src}>
-                  {src}
-                </option>
+                <option key={src} value={src}>{src}</option>
               ))}
             </select>
           </div>
 
           {/* Actions */}
           <div className={styles.modalActions}>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={handleClose}
-            >
+            <button type="button" className="btn-secondary" onClick={handleClose}>
               Ακύρωση
             </button>
             <button
               type="submit"
               className="btn-primary"
-              disabled={isSubmitting || !roomId || !guestName}
+              disabled={isSubmitting || !roomId || !guestName || !serverOnline}
+              style={{ opacity: serverOnline ? 1 : 0.5, cursor: serverOnline ? "pointer" : "not-allowed" }}
             >
               {isSubmitting ? "Αποθήκευση…" : "Επιβεβαίωση"}
             </button>
