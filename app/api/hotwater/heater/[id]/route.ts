@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { haCallService } from "@/lib/ha/connection";
 import { HEATER_ENTITIES } from "@/lib/ha/entity-map";
 
+export const dynamic = "force-dynamic";
+
 const VALID_HEATER_IDS: readonly string[] = HEATER_ENTITIES.map((h) => h.id);
 const VALID_ACTIONS = ["element_toggle", "set_min", "set_max", "set_sim_temp"] as const;
 type HeaterAction = (typeof VALID_ACTIONS)[number];

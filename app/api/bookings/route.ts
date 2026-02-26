@@ -8,6 +8,8 @@ import {
 } from "@/lib/db/bookings";
 import type { Booking } from "@/lib/db/bookings";
 
+export const dynamic = "force-dynamic";
+
 const VALID_SOURCES = ["Airbnb", "Booking.com", "Direct", "Walk-in"] as const;
 type BookingSource = (typeof VALID_SOURCES)[number];
 

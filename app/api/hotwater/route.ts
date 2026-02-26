@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/hotwater
  * Returns static 24-point solar vs electric dataset for the solar chart.

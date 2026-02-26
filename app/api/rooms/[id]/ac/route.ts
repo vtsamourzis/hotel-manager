@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { haCallService } from "@/lib/ha/connection";
 import { entityIds, type RoomId } from "@/lib/ha/entity-map";
 
+export const dynamic = "force-dynamic";
+
 const VALID_MODES = ["heat", "cool", "auto", "off"] as const;
 type HvacMode = (typeof VALID_MODES)[number];
 

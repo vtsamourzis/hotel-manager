@@ -8,6 +8,8 @@ import {
 import { getConfig, type HassConfig } from "home-assistant-js-websocket";
 import { getMachineId, getNetworkInfo, getAppVersion } from "@/lib/system-info";
 
+export const dynamic = "force-dynamic";
+
 // Cache HA config to avoid excessive WebSocket calls (60s TTL)
 let cachedConfig: { data: HassConfig; ts: number } | null = null;
 const CONFIG_TTL = 60_000;

@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { getCurrentEntitySnapshot } from "@/lib/ha/connection";
 import { ENERGY_ENTITIES, ROOMS, roomPowerEntity } from "@/lib/ha/entity-map";
 
+export const dynamic = "force-dynamic";
+
 // ---------------------------------------------------------------------------
 // Static hourly dataset -- demo environment with realistic power patterns.
 // AC peaks at noon-15:00, lighting peaks at evening, boilers morning 06-09.

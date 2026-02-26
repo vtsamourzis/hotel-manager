@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { haCallService } from "@/lib/ha/connection";
 import { entityIds, type RoomId, type EntityField } from "@/lib/ha/entity-map";
 
+export const dynamic = "force-dynamic";
+
 const VALID_ZONES = ["ceiling", "side1", "side2", "ambient"] as const;
 type ZoneName = (typeof VALID_ZONES)[number];
 

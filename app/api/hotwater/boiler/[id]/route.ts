@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { haCallService } from "@/lib/ha/connection";
 import { ROOMS, roomBoilerSwitch, type RoomId } from "@/lib/ha/entity-map";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/hotwater/boiler/[id]
  * Toggles a per-room boiler on or off.

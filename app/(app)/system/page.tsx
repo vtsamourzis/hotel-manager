@@ -13,6 +13,8 @@ import {
 } from "@/lib/system-info";
 import styles from "./system.module.css";
 
+export const dynamic = "force-dynamic";
+
 export default async function SystemPage() {
   const session = await auth();
 

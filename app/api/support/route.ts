@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth";
 import { createTicket, listTickets } from "@/lib/db/support";
 import { getMachineId, getAppVersion } from "@/lib/system-info";
 
+export const dynamic = "force-dynamic";
+
 const ticketSchema = z.object({
   type: z.enum(["bug", "general", "automation"]),
   description: z.string().min(1, "Η περιγραφή είναι υποχρεωτική"),
