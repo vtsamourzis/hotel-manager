@@ -3,6 +3,8 @@
 import { useState, useCallback, type FormEvent } from "react";
 import { CheckCircle } from "lucide-react";
 import { ROOMS } from "@/lib/ha/entity-map";
+import { useUIStore } from "@/lib/store/ui-store";
+import { guardOffline } from "@/lib/hooks/useServerOnline";
 import styles from "./automations.module.css";
 
 // ---------------------------------------------------------------------------
@@ -56,8 +58,12 @@ export function NewAutomationPanel({ open, onClose }: NewAutomationPanelProps) {
   }, [onClose, resetForm]);
 
   const handleSubmit = useCallback(
-    (e: FormEvent) => {
+    async (e: FormEvent) => {
       e.preventDefault();
+
+      // Offline guard
+      const serverOnline = useUIStore.getState().serverOnline;
+      if (guardOffline(serverOnline)) return;
 
       // Validate
       let valid = true;
@@ -78,19 +84,38 @@ export function NewAutomationPanel({ open, onClose }: NewAutomationPanelProps) {
 
       if (!valid) return;
 
-      // Log form data for debugging (backend not connected)
-      console.log("[AutomationRequest]", {
-        title: title.trim(),
-        description: description.trim(),
-        room: room || null,
-        priority,
-      });
+      // Compose description with all form fields
+      const parts = [`[${title.trim()}]`, description.trim()];
+      if (room) parts.push(`Δωμάτιο: ${room}`);
+      parts.push(`Προτεραιότητα: ${priority}`);
+      const fullDescription = parts.join("\n");
 
-      // Fake submission flow
       setPanelState("submitting");
-      setTimeout(() => {
+
+      try {
+        const res = await fetch("/api/support", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "automation",
+            description: fullDescription,
+          }),
+        });
+
+        if (!res.ok) throw new Error("Submit failed");
+
         setPanelState("confirmed");
-      }, 500);
+      } catch {
+        setPanelState("form");
+        window.dispatchEvent(
+          new CustomEvent("toast", {
+            detail: {
+              message: "\u03A3\u03C6\u03AC\u03BB\u03BC\u03B1 \u03BA\u03B1\u03C4\u03AC \u03C4\u03B7\u03BD \u03C5\u03C0\u03BF\u03B2\u03BF\u03BB\u03AE",
+              type: "error",
+            },
+          }),
+        );
+      }
     },
     [title, description, room, priority]
   );

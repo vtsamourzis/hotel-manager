@@ -37,7 +37,7 @@ export function runMigrations(database: InstanceType<typeof Database>) {
   database.exec(`
     CREATE TABLE IF NOT EXISTS support_tickets (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL CHECK(type IN ('bug', 'general')),
+      type TEXT NOT NULL CHECK(type IN ('bug', 'general', 'automation')),
       description TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open', 'in_progress', 'closed')),
       machine_id TEXT NOT NULL,
@@ -48,4 +48,35 @@ export function runMigrations(database: InstanceType<typeof Database>) {
     CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);
     CREATE INDEX IF NOT EXISTS idx_support_tickets_created ON support_tickets(created_at);
   `)
+
+  // Migrate existing support_tickets table to accept 'automation' type
+  // (SQLite CHECK constraints can't be ALTERed — recreate table if needed)
+  try {
+    database
+      .prepare(
+        `INSERT INTO support_tickets (type, description, machine_id, app_version) VALUES ('automation', '__migration_test__', '', '')`
+      )
+      .run()
+    database
+      .prepare(`DELETE FROM support_tickets WHERE description = '__migration_test__'`)
+      .run()
+  } catch {
+    database.exec(`
+      ALTER TABLE support_tickets RENAME TO support_tickets_old;
+      CREATE TABLE support_tickets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT NOT NULL CHECK(type IN ('bug', 'general', 'automation')),
+        description TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open', 'in_progress', 'closed')),
+        machine_id TEXT NOT NULL,
+        app_version TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      );
+      INSERT INTO support_tickets SELECT * FROM support_tickets_old;
+      DROP TABLE support_tickets_old;
+      CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);
+      CREATE INDEX IF NOT EXISTS idx_support_tickets_created ON support_tickets(created_at);
+    `)
+  }
 }

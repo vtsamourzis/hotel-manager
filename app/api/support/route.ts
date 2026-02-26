@@ -5,7 +5,7 @@ import { createTicket, listTickets } from "@/lib/db/support";
 import { getMachineId, getAppVersion } from "@/lib/system-info";
 
 const ticketSchema = z.object({
-  type: z.enum(["bug", "general"]),
+  type: z.enum(["bug", "general", "automation"]),
   description: z.string().min(1, "Η περιγραφή είναι υποχρεωτική"),
 });
 

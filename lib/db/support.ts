@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 
 export interface SupportTicket {
   id: number;
-  type: "bug" | "general";
+  type: "bug" | "general" | "automation";
   description: string;
   status: "open" | "in_progress" | "closed";
   machine_id: string;

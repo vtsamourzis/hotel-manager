@@ -224,7 +224,9 @@ export default function SupportPage() {
                 <span className={styles.ticketType}>
                   {ticket.type === "bug"
                     ? "\u03A3\u03C6\u03AC\u03BB\u03BC\u03B1"
-                    : "\u039C\u03AE\u03BD\u03C5\u03BC\u03B1"}
+                    : ticket.type === "automation"
+                      ? "\u0391\u03C5\u03C4\u03BF\u03BC\u03B1\u03C4\u03B9\u03C3\u03BC\u03CC\u03C2"
+                      : "\u039C\u03AE\u03BD\u03C5\u03BC\u03B1"}
                 </span>
                 <span
                   className={`${styles.statusBadge} ${STATUS_CLASSES[ticket.status]}`}
