@@ -14,11 +14,6 @@ export default auth((req) => {
     return NextResponse.next()
   }
 
-  // Diagnostic endpoint: skip auth (dev only — remove before production)
-  if (pathname === "/api/ha/diagnostic") {
-    return NextResponse.next()
-  }
-
   // All app routes: require authentication → /login (login page checks if /setup needed)
   if (!req.auth) {
     return NextResponse.redirect(new URL("/login", req.url))

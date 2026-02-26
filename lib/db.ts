@@ -1,6 +1,7 @@
 import Database from "better-sqlite3"
 import path from "path"
 import { runMigrations } from "./db/migrations"
+import { validateEnv } from "./env"
 
 const DB_PATH = process.env.DB_PATH ?? path.join(process.cwd(), "data", "hotel.db")
 
@@ -11,6 +12,7 @@ declare global {
 
 function getDb() {
   if (!global._db) {
+    validateEnv()
     global._db = new Database(DB_PATH)
     global._db.pragma("journal_mode = WAL")
     global._db.pragma("foreign_keys = ON")
