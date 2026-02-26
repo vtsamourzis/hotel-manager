@@ -36,6 +36,13 @@ const serwist = new Serwist({
         sameOrigin && url.pathname.startsWith("/api/"),
       handler: new NetworkOnly(),
     },
+    // Navigation requests (HTML pages) — bypass SW, go straight to server.
+    // iOS Safari's SW implementation adds 1-2s latency on navigation interception.
+    // Static assets still get cached below; only page navigations skip the SW.
+    {
+      matcher: ({ request }) => request.mode === "navigate",
+      handler: new NetworkOnly(),
+    },
     // Default cache for static assets (JS, CSS, images, fonts including Google Fonts)
     ...defaultCache,
   ],
