@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useCallback, type FormEvent } from "react";
-import { CheckCircle } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { CheckCircle, Clock } from "lucide-react";
 import { ROOMS } from "@/lib/ha/entity-map";
 import { useUIStore } from "@/lib/store/ui-store";
 import { guardOffline } from "@/lib/hooks/useServerOnline";
+import type { SupportTicket } from "@/lib/db/support";
 import styles from "./automations.module.css";
 
 // ---------------------------------------------------------------------------
@@ -27,6 +29,24 @@ const PRIORITY_OPTIONS: { value: Priority; label: string }[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function formatTimestamp(iso: string): string {
+  try {
+    const d = new Date(iso);
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2, "0");
+    const min = String(d.getMinutes()).padStart(2, "0");
+    return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
+  } catch {
+    return iso;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -40,6 +60,17 @@ export function NewAutomationPanel({ open, onClose }: NewAutomationPanelProps) {
   // Inline validation errors
   const [titleError, setTitleError] = useState("");
   const [descError, setDescError] = useState("");
+
+  // TanStack Query — cache invalidation + automation ticket history
+  const queryClient = useQueryClient();
+  const { data: ticketsData } = useQuery<{ tickets: SupportTicket[] }>({
+    queryKey: ["support-tickets"],
+    queryFn: () => fetch("/api/support").then((r) => r.json()),
+    select: (data) => ({
+      tickets: data.tickets.filter((t) => t.type === "automation"),
+    }),
+  });
+  const automationTickets = ticketsData?.tickets ?? [];
 
   const resetForm = useCallback(() => {
     setTitle("");
@@ -105,6 +136,7 @@ export function NewAutomationPanel({ open, onClose }: NewAutomationPanelProps) {
         if (!res.ok) throw new Error("Submit failed");
 
         setPanelState("confirmed");
+        queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
       } catch {
         setPanelState("form");
         window.dispatchEvent(
@@ -256,6 +288,43 @@ export function NewAutomationPanel({ open, onClose }: NewAutomationPanelProps) {
                 {"\u03A5\u03C0\u03BF\u03B2\u03BF\u03BB\u03AE \u0391\u03B9\u03C4\u03AE\u03BC\u03B1\u03C4\u03BF\u03C2"}
               </button>
             </form>
+          )}
+
+          {/* Automation ticket history — visible in all panel states */}
+          {automationTickets.length > 0 && (
+            <div className={styles.panelHistory}>
+              <h3 className={styles.panelHistoryTitle}>
+                {"\u0399\u03C3\u03C4\u03BF\u03C1\u03B9\u03BA\u03CC \u0391\u03B9\u03C4\u03B7\u03BC\u03AC\u03C4\u03C9\u03BD"}
+              </h3>
+              {automationTickets.slice(0, 5).map((ticket) => (
+                <div key={ticket.id} className={styles.panelTicketCard}>
+                  <div className={styles.panelTicketHeader}>
+                    <span className={styles.panelTicketNumber}>
+                      #{ticket.id}
+                    </span>
+                    <span className={styles.panelTicketStatus}>
+                      {ticket.status === "open"
+                        ? "\u0391\u03BD\u03BF\u03B9\u03C7\u03C4\u03CC"
+                        : ticket.status === "in_progress"
+                          ? "\u03A3\u03B5 \u03B5\u03BE\u03AD\u03BB\u03B9\u03BE\u03B7"
+                          : "\u039A\u03BB\u03B5\u03B9\u03C3\u03C4\u03CC"}
+                    </span>
+                  </div>
+                  <div className={styles.panelTicketDesc}>
+                    {ticket.description.length > 80
+                      ? ticket.description.slice(0, 80) + "\u2026"
+                      : ticket.description}
+                  </div>
+                  <div className={styles.panelTicketTime}>
+                    <Clock
+                      size={10}
+                      style={{ marginRight: 3, verticalAlign: -1 }}
+                    />
+                    {formatTimestamp(ticket.created_at)}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </aside>
