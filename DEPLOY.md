@@ -62,6 +62,7 @@ cd hotel-manager
 cd /opt/hotel-manager
 
 # Install dependencies (builds native modules like better-sqlite3)
+# dotenv is included in dependencies — it's used by PM2 to load .env
 pnpm install
 
 # Create .env
@@ -77,19 +78,28 @@ mkdir -p data
 pnpm build
 
 # Start with PM2
+# PM2 loads .env automatically via dotenv (configured in ecosystem.config.js)
+# You do NOT need to manually export variables
 pm2 start ecosystem.config.js
 
 # Verify
 curl http://localhost:3000/api/health
 # Should return: {"ok":true}
+```
 
-# Save PM2 process list (survives reboot)
+### PM2 startup persistence
+
+Configure PM2 to auto-restart the app on system reboot:
+
+```bash
+# Save current PM2 process list
 pm2 save
 
-# Setup PM2 to start on boot
+# Generate and install startup script (runs as root on LXC)
 pm2 startup
-# Run the command it outputs (copy-paste the exact line)
 ```
+
+After running `pm2 startup`, PM2 will print a command — run it. This ensures hotel-manager restarts automatically if CT101 reboots.
 
 ---
 
@@ -200,6 +210,10 @@ git pull
 pnpm install          # only needed if dependencies changed
 pnpm build
 pm2 restart hotel-manager
+
+# Optional: run E2E tests against the running app
+# (requires Chromium installed: npx playwright install chromium)
+# pnpm test:e2e
 ```
 
 Downtime is only during the `pm2 restart` (< 2 seconds). Build runs while the old version is still serving.
@@ -272,6 +286,40 @@ fuser /opt/hotel-manager/data/hotel.db
 pm2 restart hotel-manager
 ```
 
+### Run diagnostics
+
+A diagnostic script checks all common issues:
+
+```bash
+bash /opt/hotel-manager/scripts/diagnose-production.sh
+```
+
+This checks: Node.js, PM2 process status, .env variables, database, health endpoint, page load, and HA connectivity.
+
+### Missing environment variables
+
+If the app starts but pages fail with "Application error", check that .env is loaded:
+
+```bash
+# Verify .env exists
+ls -la /opt/hotel-manager/.env
+
+# Check PM2 is using dotenv preload
+pm2 show hotel-manager | grep node_args
+# Should show: -r dotenv/config
+
+# If node_args is missing, update ecosystem.config.js and restart:
+pm2 restart hotel-manager
+```
+
+### Greek error page instead of app content
+
+If you see a Greek error message meaning "Something went wrong" with a retry button:
+
+1. This is the app's error boundary — the app is running but a page errored
+2. Check PM2 logs for the actual error: `pm2 logs hotel-manager --lines 30`
+3. Common causes: HA disconnected, database locked, missing entity
+
 ### PM2 commands
 
 ```bash
@@ -313,6 +361,22 @@ cloudflared tunnel list         # Check tunnel exists
 ```bash
 # On the new server: follow sections 1-4 of this guide
 # Only .env values and cloudflared config change per client
+```
+
+### Verify deployment
+
+After deploying to a new client machine:
+
+```bash
+# Install Playwright browser
+npx playwright install chromium
+
+# Set test credentials
+export TEST_EMAIL="admin@hotel.local"
+export TEST_PASSWORD="your-admin-password"
+
+# Run E2E tests
+pnpm test:e2e
 ```
 
 ---
