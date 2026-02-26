@@ -4,8 +4,8 @@ import { NextResponse } from "next/server"
 export default auth((req) => {
   const { pathname } = req.nextUrl
 
-  // Pass Auth.js internal routes through always
-  if (pathname.startsWith("/api/auth")) {
+  // Pass Auth.js internal routes and health check through always
+  if (pathname.startsWith("/api/auth") || pathname === "/api/health") {
     return NextResponse.next()
   }
 
