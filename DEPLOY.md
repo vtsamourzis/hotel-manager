@@ -50,26 +50,10 @@ pm2 -v     # 6.x.x
 
 ## 2. Deploy the App
 
-### Option A: Git clone (if you have a remote repo)
-
 ```bash
 cd /opt
-git clone <repo-url> hotel-manager
+git clone https://github.com/vtsamourzis/hotel-manager.git
 cd hotel-manager
-```
-
-### Option B: Copy from dev machine (no repo)
-
-From your Windows machine:
-```bash
-# Using scp (run from Windows terminal / Git Bash)
-scp -r D:/Ha-Project/AegeanSea/hotel-manager root@10.10.90.11:/opt/hotel-manager
-```
-
-Or using rsync (better for updates):
-```bash
-rsync -avz --exclude node_modules --exclude .next --exclude .env.local --exclude data \
-  hotel-manager/ root@10.10.90.11:/opt/hotel-manager/
 ```
 
 ### Install and build
@@ -210,28 +194,10 @@ Now `https://hotel.yourdomain.com` reaches your app.
 
 ## 5. Deploying Updates
 
-### From git
-
 ```bash
 cd /opt/hotel-manager
 git pull
 pnpm install          # only needed if dependencies changed
-pnpm build
-pm2 restart hotel-manager
-```
-
-### From rsync (no git)
-
-From your Windows machine:
-```bash
-rsync -avz --exclude node_modules --exclude .next --exclude .env --exclude .env.local --exclude data \
-  hotel-manager/ root@10.10.90.11:/opt/hotel-manager/
-```
-
-Then on CT101:
-```bash
-cd /opt/hotel-manager
-pnpm install
 pnpm build
 pm2 restart hotel-manager
 ```
