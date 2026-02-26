@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { haCallService } from "@/lib/ha/connection";
-import { AUTOMATION_ENTITIES } from "@/lib/ha/entity-map";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(
   req: NextRequest,
@@ -12,6 +12,10 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
+
+  const { AUTOMATION_ENTITIES } = await import("@/lib/ha/entity-map");
+  const { haCallService } = await import("@/lib/ha/connection");
+
   const entityId = AUTOMATION_ENTITIES.find((a) => a.id === id)?.entityId;
 
   if (!entityId) {
