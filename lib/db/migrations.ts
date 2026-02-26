@@ -26,4 +26,26 @@ export function runMigrations(database: InstanceType<typeof Database>) {
     CREATE INDEX IF NOT EXISTS idx_bookings_check_in ON bookings(check_in);
     CREATE INDEX IF NOT EXISTS idx_bookings_check_out ON bookings(check_out);
   `)
+
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+  `)
+
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS support_tickets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL CHECK(type IN ('bug', 'general')),
+      description TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open', 'in_progress', 'closed')),
+      machine_id TEXT NOT NULL,
+      app_version TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);
+    CREATE INDEX IF NOT EXISTS idx_support_tickets_created ON support_tickets(created_at);
+  `)
 }
